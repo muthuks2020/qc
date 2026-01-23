@@ -1,0 +1,152 @@
+// Mock Data - Replace with actual Odoo API responses
+export const mockPendingJobs = [
+  {
+    id: 'QC-2025-001',
+    grnNo: 'MES-25-IN-00041',
+    grnDate: '2025-10-10',
+    poNo: 'PH/HO-25-07725',
+    irNo: 'SYN-0114',
+    supplier: {
+      code: 'SC001540',
+      name: 'M/s Sri Sakthi Ganesh Casting Works, Chennai',
+    },
+    product: {
+      code: 'DSYN-090-DP',
+      name: 'Aluminium Casting Handle - DP',
+      category: 'Raw Material',
+    },
+    lotSize: 60,
+    sampleSize: 10,
+    priority: 'high',
+    status: 'pending',
+    createdAt: '2025-10-10T08:30:00Z',
+    dueDate: '2025-10-11T17:00:00Z',
+  },
+  {
+    id: 'QC-2025-002',
+    grnNo: 'MES-25-IN-00042',
+    grnDate: '2025-10-10',
+    poNo: 'PH/HO-25-07730',
+    irNo: 'SYN-0115',
+    supplier: {
+      code: 'SC001542',
+      name: 'Precision Components Pvt Ltd, Bangalore',
+    },
+    product: {
+      code: 'AAT-9002',
+      name: 'Phaco Handpiece Orbit',
+      category: 'Finished Goods',
+    },
+    lotSize: 39,
+    sampleSize: 39,
+    priority: 'medium',
+    status: 'pending',
+    createdAt: '2025-10-10T09:15:00Z',
+    dueDate: '2025-10-12T17:00:00Z',
+  },
+  {
+    id: 'QC-2025-003',
+    grnNo: 'MES-25-IN-00043',
+    grnDate: '2025-10-09',
+    poNo: 'PH/HO-25-07728',
+    irNo: 'SYN-0113',
+    supplier: {
+      code: 'SC001538',
+      name: 'Optical Lens Manufacturing Co., Pondicherry',
+    },
+    product: {
+      code: 'IOL-5500',
+      name: 'Intraocular Lens 21D',
+      category: 'Finished Goods',
+    },
+    lotSize: 100,
+    sampleSize: 20,
+    priority: 'high',
+    status: 'in_progress',
+    createdAt: '2025-10-09T14:00:00Z',
+    dueDate: '2025-10-10T17:00:00Z',
+  },
+  {
+    id: 'QC-2025-004',
+    grnNo: 'MES-25-IN-00040',
+    grnDate: '2025-10-08',
+    poNo: 'PH/HO-25-07720',
+    irNo: 'SYN-0110',
+    supplier: {
+      code: 'SC001535',
+      name: 'Steel Tubes India, Coimbatore',
+    },
+    product: {
+      code: 'STL-3020',
+      name: 'Stainless Steel Tube 3mm',
+      category: 'Raw Material',
+    },
+    lotSize: 500,
+    sampleSize: 50,
+    priority: 'low',
+    status: 'completed',
+    createdAt: '2025-10-08T10:00:00Z',
+    completedAt: '2025-10-08T16:30:00Z',
+    passRate: 98,
+  },
+];
+
+export const mockJobDetails = {
+  'QC-2025-001': {
+    id: 'QC-2025-001',
+    grnNo: 'MES-25-IN-00041',
+    poNo: 'PH/HO-25-07725',
+    irNo: 'SYN-0114',
+    irDate: '2025-10-10',
+    supplier: {
+      code: 'SC001540',
+      name: 'M/s Sri Sakthi Ganesh Casting Works, Chennai',
+    },
+    product: {
+      code: 'DSYN-090-DP',
+      name: 'Aluminium Casting Handle - DP',
+    },
+    lotSize: 60,
+    sampleSize: 10,
+    qualityPlanNo: 'MQP-SYN-03',
+    imteId: 'AT ELE 0102 (Vernier)',
+    checkpoints: [
+      { id: 1, name: 'Height', instrument: 'Vernier', spec: '94mm', tolerance: '±0.5mm', samples: Array(10).fill(null) },
+      { id: 2, name: 'Thickness-1', instrument: 'Vernier', spec: '29mm', tolerance: '±0.3mm', samples: Array(10).fill(null) },
+      { id: 3, name: 'Thickness-2', instrument: 'Vernier', spec: '12mm', tolerance: '±0.2mm', samples: Array(10).fill(null) },
+    ],
+  },
+  'QC-2025-002': {
+    id: 'QC-2025-002',
+    grnNo: 'MES-25-IN-00042',
+    poNo: 'PH/HO-25-07730',
+    irNo: 'SYN-0115',
+    irDate: '2025-10-10',
+    supplier: {
+      code: 'SC001542',
+      name: 'Precision Components Pvt Ltd, Bangalore',
+    },
+    product: {
+      code: 'AAT-9002',
+      name: 'Phaco Handpiece Orbit',
+    },
+    lotSize: 39,
+    sampleSize: 39,
+    qualityPlanNo: 'RD-7.3-07-A12',
+    imteId: 'Visual & Jig-08',
+    checkpoints: [
+      { id: 1, name: 'Thread Condition Check', instrument: 'Visual', spec: 'No Damage', tolerance: '-', samples: Array(10).fill(null) },
+      { id: 2, name: 'LuerLock Connector HP Check', instrument: 'Visual', spec: 'Proper Fit', tolerance: '-', samples: Array(10).fill(null) },
+      { id: 3, name: 'Irrigation Flow Checking', instrument: 'Jig-08', spec: 'Flow OK', tolerance: '-', samples: Array(10).fill(null) },
+      { id: 4, name: 'Block in Irrigation Path', instrument: 'Jig-08', spec: 'No Block', tolerance: '-', samples: Array(10).fill(null) },
+      { id: 5, name: 'Quantity Verification', instrument: 'Visual', spec: '39 Nos', tolerance: '-', samples: Array(10).fill(null) },
+    ],
+  },
+};
+
+export const mockDashboardStats = {
+  pendingJobs: 8,
+  inProgress: 3,
+  completedToday: 12,
+  passRate: 97.5,
+};
