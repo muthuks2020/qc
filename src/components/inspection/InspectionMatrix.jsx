@@ -1,14 +1,37 @@
-import React from 'react';
-import { Check, X } from 'lucide-react';
+import React, { useState, useCallback } from 'react';
+import { Check, X, FileText, ExternalLink } from 'lucide-react';
 import { colors, borderRadius } from '../../constants/theme';
+import { INPUT_TYPES, isWithinLimits, getStatusFromMeasuredValue } from '../../api/mockData';
 
-export const InspectionMatrix = ({ checkpoints, onToggleSample }) => {
+/**
+ * InspectionMatrix Component
+ * 
+ * Enhanced matrix with:
+ * - Yes/No toggle buttons
+ * - Measurement input fields
+ * - QC file links below checkpoint names
+ * - Support for different input types (measurement, yesno, both)
+ * 
+ * @param {Array} checkpoints - List of checkpoints with samples
+ * @param {Function} onToggleSample - Callback for Yes/No toggle (checkpointIndex, sampleIndex)
+ * @param {Function} onMeasuredValueChange - Callback for measurement input (checkpointIndex, sampleIndex, value)
+ * @param {Function} onQCFileClick - Callback when QC file link is clicked (checkpoint)
+ */
+export const InspectionMatrix = ({ 
+  checkpoints, 
+  onToggleSample, 
+  onMeasuredValueChange,
+  onQCFileClick,
+}) => {
+  // Calculate pass/fail statistics
   const getPassCount = () => {
     let pass = 0, fail = 0;
     checkpoints.forEach(cp => {
       cp.samples.forEach(s => {
-        if (s === 'OK') pass++;
-        else if (s === 'NG') fail++;
+        // Support both old format (string) and new format (object)
+        const status = typeof s === 'object' ? s?.status : s;
+        if (status === 'OK') pass++;
+        else if (status === 'NG') fail++;
       });
     });
     return { pass, fail, total: pass + fail };
@@ -17,6 +40,33 @@ export const InspectionMatrix = ({ checkpoints, onToggleSample }) => {
   const { pass, fail, total } = getPassCount();
   const passRate = total > 0 ? ((pass / total) * 100).toFixed(1) : 0;
 
+  // Determine input type for a checkpoint
+  const getInputType = (checkpoint) => {
+    return checkpoint.inputType || INPUT_TYPES.YESNO;
+  };
+
+  // Check if checkpoint should show measurement input
+  const showMeasurementInput = (checkpoint) => {
+    const inputType = getInputType(checkpoint);
+    return inputType === INPUT_TYPES.MEASUREMENT || inputType === INPUT_TYPES.BOTH;
+  };
+
+  // Check if checkpoint should show Yes/No toggle
+  const showYesNoToggle = (checkpoint) => {
+    const inputType = getInputType(checkpoint);
+    return inputType === INPUT_TYPES.YESNO || inputType === INPUT_TYPES.BOTH;
+  };
+
+  // Handle QC file click
+  const handleQCFileClick = (checkpoint) => {
+    if (onQCFileClick) {
+      onQCFileClick(checkpoint);
+    } else if (checkpoint.qcFileUrl) {
+      // Default behavior: open in new tab
+      window.open(checkpoint.qcFileUrl, '_blank');
+    }
+  };
+
   return (
     <div style={{
       background: 'white',
@@ -24,7 +74,7 @@ export const InspectionMatrix = ({ checkpoints, onToggleSample }) => {
       padding: '24px',
       border: `1px solid ${colors.neutral[100]}`,
     }}>
-      {/* Header */}
+      {/* Header with Stats */}
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',
@@ -35,30 +85,8 @@ export const InspectionMatrix = ({ checkpoints, onToggleSample }) => {
           Inspection Matrix
         </h3>
         <div style={{ display: 'flex', gap: '16px' }}>
-          <div style={{
-            padding: '8px 16px',
-            background: colors.successLight,
-            borderRadius: '8px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-          }}>
-            <Check size={16} color={colors.success} />
-            <span style={{ fontWeight: 600, color: colors.success }}>{pass}</span>
-            <span style={{ color: colors.success, fontSize: '13px' }}>Passed</span>
-          </div>
-          <div style={{
-            padding: '8px 16px',
-            background: colors.dangerLight,
-            borderRadius: '8px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-          }}>
-            <X size={16} color={colors.danger} />
-            <span style={{ fontWeight: 600, color: colors.danger }}>{fail}</span>
-            <span style={{ color: colors.danger, fontSize: '13px' }}>Failed</span>
-          </div>
+          <StatBadge icon={<Check size={16} />} value={pass} label="Passed" color={colors.success} bgColor={colors.successLight} />
+          <StatBadge icon={<X size={16} />} value={fail} label="Failed" color={colors.danger} bgColor={colors.dangerLight} />
           <div style={{
             padding: '8px 16px',
             background: colors.neutral[100],
@@ -83,6 +111,7 @@ export const InspectionMatrix = ({ checkpoints, onToggleSample }) => {
                 fontSize: '12px',
                 fontWeight: 600,
                 borderRadius: '8px 0 0 0',
+                minWidth: '180px',
               }}>
                 Checkpoint
               </th>
@@ -105,7 +134,7 @@ export const InspectionMatrix = ({ checkpoints, onToggleSample }) => {
                   fontSize: '12px',
                   fontWeight: 600,
                   textAlign: 'center',
-                  minWidth: '48px',
+                  minWidth: showMeasurementInput(checkpoints[0]) ? '80px' : '48px',
                 }}>
                   S{i + 1}
                 </th>
@@ -114,41 +143,16 @@ export const InspectionMatrix = ({ checkpoints, onToggleSample }) => {
           </thead>
           <tbody>
             {checkpoints.map((checkpoint, cpIndex) => (
-              <tr key={checkpoint.id} style={{
-                borderBottom: `1px solid ${colors.neutral[100]}`,
-              }}>
-                <td style={{
-                  padding: '16px',
-                  fontSize: '14px',
-                  color: colors.neutral[700],
-                  fontWeight: 500,
-                }}>
-                  {checkpoint.name}
-                  <div style={{ fontSize: '12px', color: colors.neutral[400], marginTop: '2px' }}>
-                    {checkpoint.instrument}
-                  </div>
-                </td>
-                <td style={{
-                  padding: '16px',
-                  fontSize: '13px',
-                  color: colors.neutral[600],
-                }}>
-                  {checkpoint.spec}
-                  {checkpoint.tolerance !== '-' && (
-                    <div style={{ fontSize: '11px', color: colors.neutral[400] }}>
-                      {checkpoint.tolerance}
-                    </div>
-                  )}
-                </td>
-                {checkpoint.samples.map((sample, sampleIndex) => (
-                  <td key={sampleIndex} style={{ padding: '8px', textAlign: 'center' }}>
-                    <SampleButton
-                      value={sample}
-                      onClick={() => onToggleSample(cpIndex, sampleIndex)}
-                    />
-                  </td>
-                ))}
-              </tr>
+              <CheckpointRow
+                key={checkpoint.id}
+                checkpoint={checkpoint}
+                cpIndex={cpIndex}
+                showMeasurement={showMeasurementInput(checkpoint)}
+                showToggle={showYesNoToggle(checkpoint)}
+                onToggleSample={onToggleSample}
+                onMeasuredValueChange={onMeasuredValueChange}
+                onQCFileClick={handleQCFileClick}
+              />
             ))}
           </tbody>
         </table>
@@ -157,7 +161,260 @@ export const InspectionMatrix = ({ checkpoints, onToggleSample }) => {
   );
 };
 
-// Sample toggle button component
+/**
+ * CheckpointRow Component
+ * Renders a single row in the inspection matrix
+ */
+const CheckpointRow = ({
+  checkpoint,
+  cpIndex,
+  showMeasurement,
+  showToggle,
+  onToggleSample,
+  onMeasuredValueChange,
+  onQCFileClick,
+}) => {
+  return (
+    <tr style={{
+      borderBottom: `1px solid ${colors.neutral[100]}`,
+    }}>
+      {/* Checkpoint Name with QC File Link */}
+      <td style={{
+        padding: '16px',
+        fontSize: '14px',
+        color: colors.neutral[700],
+        fontWeight: 500,
+        verticalAlign: 'top',
+      }}>
+        <div>
+          {checkpoint.name}
+          <div style={{ fontSize: '12px', color: colors.neutral[400], marginTop: '2px' }}>
+            {checkpoint.instrument}
+          </div>
+          
+          {/* QC File Link - Only show if qcFileUrl exists */}
+          {checkpoint.qcFileUrl && (
+            <QCFileLink 
+              checkpoint={checkpoint}
+              onClick={() => onQCFileClick(checkpoint)}
+            />
+          )}
+        </div>
+      </td>
+
+      {/* Spec Column */}
+      <td style={{
+        padding: '16px',
+        fontSize: '13px',
+        color: colors.neutral[600],
+        verticalAlign: 'top',
+      }}>
+        {checkpoint.spec}
+        {checkpoint.tolerance !== '-' && (
+          <div style={{ fontSize: '11px', color: colors.neutral[400] }}>
+            {checkpoint.tolerance}
+          </div>
+        )}
+      </td>
+
+      {/* Sample Columns */}
+      {checkpoint.samples.map((sample, sampleIndex) => (
+        <td key={sampleIndex} style={{ padding: '8px', textAlign: 'center', verticalAlign: 'top' }}>
+          <SampleCell
+            sample={sample}
+            checkpoint={checkpoint}
+            cpIndex={cpIndex}
+            sampleIndex={sampleIndex}
+            showMeasurement={showMeasurement}
+            showToggle={showToggle}
+            onToggleSample={onToggleSample}
+            onMeasuredValueChange={onMeasuredValueChange}
+          />
+        </td>
+      ))}
+    </tr>
+  );
+};
+
+/**
+ * QCFileLink Component
+ * Renders the QC file link below checkpoint name
+ */
+const QCFileLink = ({ checkpoint, onClick }) => {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '4px',
+        marginTop: '6px',
+        padding: '4px 8px',
+        background: colors.primary + '10',
+        border: 'none',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        fontSize: '11px',
+        color: colors.primary,
+        fontWeight: 500,
+        transition: 'all 0.15s',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.background = colors.primary + '20';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.background = colors.primary + '10';
+      }}
+      title={`View QC Parameters - ${checkpoint.qcFileId || 'QC File'}`}
+    >
+      <FileText size={12} />
+      <span>QC Parameters</span>
+      <ExternalLink size={10} />
+    </button>
+  );
+};
+
+/**
+ * SampleCell Component
+ * Renders the input cell for a sample (measurement input and/or Yes/No toggle)
+ */
+const SampleCell = ({
+  sample,
+  checkpoint,
+  cpIndex,
+  sampleIndex,
+  showMeasurement,
+  showToggle,
+  onToggleSample,
+  onMeasuredValueChange,
+}) => {
+  // Get current values (support both old and new data format)
+  const getSampleStatus = () => {
+    if (typeof sample === 'object' && sample !== null) {
+      return sample.status;
+    }
+    return sample; // Old format: direct string value
+  };
+
+  const getSampleMeasuredValue = () => {
+    if (typeof sample === 'object' && sample !== null) {
+      return sample.measuredValue;
+    }
+    return null;
+  };
+
+  const status = getSampleStatus();
+  const measuredValue = getSampleMeasuredValue();
+
+  // Handle measurement input change
+  const handleMeasurementChange = (value) => {
+    if (onMeasuredValueChange) {
+      onMeasuredValueChange(cpIndex, sampleIndex, value);
+    }
+  };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', alignItems: 'center' }}>
+      {/* Measurement Input Field */}
+      {showMeasurement && (
+        <MeasurementInput
+          value={measuredValue}
+          checkpoint={checkpoint}
+          onChange={handleMeasurementChange}
+        />
+      )}
+
+      {/* Yes/No Toggle Button */}
+      {showToggle && (
+        <SampleButton
+          value={status}
+          onClick={() => onToggleSample(cpIndex, sampleIndex)}
+        />
+      )}
+    </div>
+  );
+};
+
+/**
+ * MeasurementInput Component
+ * Input field for entering measured values
+ */
+const MeasurementInput = ({ value, checkpoint, onChange }) => {
+  const [localValue, setLocalValue] = useState(value !== null ? String(value) : '');
+  const [isFocused, setIsFocused] = useState(false);
+
+  // Determine if value is within limits
+  const withinLimits = value !== null ? isWithinLimits(value, checkpoint) : null;
+  
+  // Get border color based on value validity
+  const getBorderColor = () => {
+    if (isFocused) return colors.primary;
+    if (withinLimits === true) return colors.success;
+    if (withinLimits === false) return colors.danger;
+    return colors.neutral[200];
+  };
+
+  // Get background color based on value validity
+  const getBackgroundColor = () => {
+    if (withinLimits === true) return colors.success + '10';
+    if (withinLimits === false) return colors.danger + '10';
+    return 'white';
+  };
+
+  const handleChange = (e) => {
+    const newValue = e.target.value;
+    setLocalValue(newValue);
+  };
+
+  const handleBlur = () => {
+    setIsFocused(false);
+    // Only trigger onChange if value is different
+    const numValue = localValue === '' ? null : parseFloat(localValue);
+    if (numValue !== value) {
+      onChange(numValue);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.target.blur();
+    }
+  };
+
+  return (
+    <input
+      type="text"
+      value={localValue}
+      onChange={handleChange}
+      onFocus={() => setIsFocused(true)}
+      onBlur={handleBlur}
+      onKeyDown={handleKeyDown}
+      placeholder={checkpoint.unit || '—'}
+      style={{
+        width: '60px',
+        height: '32px',
+        padding: '4px 8px',
+        border: `2px solid ${getBorderColor()}`,
+        borderRadius: '6px',
+        fontSize: '13px',
+        textAlign: 'center',
+        background: getBackgroundColor(),
+        outline: 'none',
+        transition: 'all 0.15s',
+        color: colors.neutral[700],
+      }}
+      title={checkpoint.upperLimit && checkpoint.lowerLimit 
+        ? `Range: ${checkpoint.lowerLimit} - ${checkpoint.upperLimit} ${checkpoint.unit || ''}`
+        : 'Enter measured value'
+      }
+    />
+  );
+};
+
+/**
+ * SampleButton Component
+ * Yes/No toggle button for pass/fail status
+ */
 const SampleButton = ({ value, onClick }) => {
   const getStyles = () => {
     if (value === 'OK') {
@@ -196,12 +453,33 @@ const SampleButton = ({ value, onClick }) => {
         alignItems: 'center',
         justifyContent: 'center',
         transition: 'all 0.15s',
-        ...styles,
+        background: styles.background,
+        color: styles.color,
       }}
+      title={value === 'OK' ? 'Pass (click to change)' : value === 'NG' ? 'Fail (click to change)' : 'Click to mark as Pass'}
     >
       {styles.icon || '–'}
     </button>
   );
 };
+
+/**
+ * StatBadge Component
+ * Stats badge for pass/fail counts
+ */
+const StatBadge = ({ icon, value, label, color, bgColor }) => (
+  <div style={{
+    padding: '8px 16px',
+    background: bgColor,
+    borderRadius: '8px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+  }}>
+    <span style={{ color }}>{icon}</span>
+    <span style={{ fontWeight: 600, color }}>{value}</span>
+    <span style={{ color, fontSize: '13px' }}>{label}</span>
+  </div>
+);
 
 export default InspectionMatrix;

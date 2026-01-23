@@ -9,23 +9,22 @@ export const Card = ({
   style = {},
   ...props
 }) => {
+  const [isHovered, setIsHovered] = React.useState(false);
+
   return (
     <div
       onClick={onClick}
+      onMouseEnter={() => hover && setIsHovered(true)}
+      onMouseLeave={() => hover && setIsHovered(false)}
       style={{
         background: 'white',
         borderRadius: borderRadius.xl,
         padding,
-        boxShadow: shadows.md,
+        boxShadow: isHovered ? shadows.lg : shadows.md,
         border: `1px solid ${colors.neutral[100]}`,
         cursor: onClick ? 'pointer' : 'default',
         transition: 'all 0.2s',
-        ...(hover && {
-          ':hover': {
-            boxShadow: shadows.lg,
-            transform: 'translateY(-2px)',
-          },
-        }),
+        transform: isHovered ? 'translateY(-2px)' : 'none',
         ...style,
       }}
       {...props}

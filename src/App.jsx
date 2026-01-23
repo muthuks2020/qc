@@ -1,15 +1,20 @@
 import React, { useState } from 'react';
-import { Sidebar } from './components/common';
-import { DashboardPage, InspectionPage } from './pages';
 import { colors } from './constants/theme';
+import { Sidebar } from './components/common';
+import DashboardPage from './pages/DashboardPage';
+import InspectionPage from './pages/InspectionPage';
 
+/**
+ * Main App Component
+ * Handles navigation between pages
+ */
 function App() {
   const [activeView, setActiveView] = useState('dashboard');
   const [selectedJobId, setSelectedJobId] = useState(null);
 
-  const handleNavigate = (viewId) => {
-    setActiveView(viewId);
-    if (viewId === 'dashboard') {
+  const handleNavigate = (view) => {
+    setActiveView(view);
+    if (view === 'dashboard') {
       setSelectedJobId(null);
     }
   };
@@ -43,24 +48,20 @@ function App() {
         {activeView === 'dashboard' && (
           <DashboardPage onNavigateToInspection={handleNavigateToInspection} />
         )}
+        
         {activeView === 'inspection' && (
           <InspectionPage jobId={selectedJobId} onBack={handleBackToDashboard} />
         )}
-        {activeView === 'batches' && (
-          <PlaceholderPage title="Batches" />
-        )}
-        {activeView === 'reports' && (
-          <PlaceholderPage title="Reports" />
-        )}
-        {activeView === 'settings' && (
-          <PlaceholderPage title="Settings" />
-        )}
+
+        {activeView === 'batches' && <PlaceholderPage title="Batches" />}
+        {activeView === 'reports' && <PlaceholderPage title="Reports" />}
+        {activeView === 'settings' && <PlaceholderPage title="Settings" />}
       </main>
     </div>
   );
 }
 
-// Placeholder for other pages
+// Placeholder for pages not yet implemented
 const PlaceholderPage = ({ title }) => (
   <div style={{ padding: '32px 40px' }}>
     <h1 style={{ color: colors.neutral[800] }}>{title}</h1>

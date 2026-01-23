@@ -3,6 +3,13 @@ import { QrCode } from 'lucide-react';
 import { colors, borderRadius, shadows } from '../../constants/theme';
 import { Button } from '../common/Button';
 
+/**
+ * BatchInfo Component
+ * Displays batch/job information in the left panel
+ * 
+ * @param {Object} job - The job/batch data
+ * @param {Function} onScan - Callback for QR scan button
+ */
 export const BatchInfo = ({ job, onScan }) => {
   if (!job) return null;
 

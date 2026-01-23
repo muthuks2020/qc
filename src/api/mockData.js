@@ -1,4 +1,6 @@
 // Mock Data - Replace with actual Odoo API responses
+// Enhanced with input types, QC file links, and measured values support
+
 export const mockPendingJobs = [
   {
     id: 'QC-2025-001',
@@ -91,6 +93,7 @@ export const mockPendingJobs = [
   },
 ];
 
+// Enhanced checkpoint structure with inputType and qcFileId
 export const mockJobDetails = {
   'QC-2025-001': {
     id: 'QC-2025-001',
@@ -111,9 +114,62 @@ export const mockJobDetails = {
     qualityPlanNo: 'MQP-SYN-03',
     imteId: 'AT ELE 0102 (Vernier)',
     checkpoints: [
-      { id: 1, name: 'Height', instrument: 'Vernier', spec: '94mm', tolerance: '±0.5mm', samples: Array(10).fill(null) },
-      { id: 2, name: 'Thickness-1', instrument: 'Vernier', spec: '29mm', tolerance: '±0.3mm', samples: Array(10).fill(null) },
-      { id: 3, name: 'Thickness-2', instrument: 'Vernier', spec: '12mm', tolerance: '±0.2mm', samples: Array(10).fill(null) },
+      { 
+        id: 1, 
+        name: 'Height', 
+        instrument: 'Vernier', 
+        spec: '94mm', 
+        tolerance: '±0.5mm',
+        // Enhanced fields
+        inputType: 'measurement', // 'measurement' | 'yesno' | 'both'
+        unit: 'mm',
+        nominalValue: 94,
+        upperLimit: 94.5,
+        lowerLimit: 93.5,
+        qcFileId: 'QC-FILE-001',
+        qcFileUrl: '/files/qc-parameters/height-measurement.pdf',
+        // Samples with both status and measured values
+        samples: Array(10).fill(null).map(() => ({
+          status: null, // 'OK' | 'NG' | null
+          measuredValue: null, // number | null
+        })),
+      },
+      { 
+        id: 2, 
+        name: 'Thickness-1', 
+        instrument: 'Vernier', 
+        spec: '29mm', 
+        tolerance: '±0.3mm',
+        inputType: 'measurement',
+        unit: 'mm',
+        nominalValue: 29,
+        upperLimit: 29.3,
+        lowerLimit: 28.7,
+        qcFileId: 'QC-FILE-002',
+        qcFileUrl: '/files/qc-parameters/thickness-1-measurement.pdf',
+        samples: Array(10).fill(null).map(() => ({
+          status: null,
+          measuredValue: null,
+        })),
+      },
+      { 
+        id: 3, 
+        name: 'Thickness-2', 
+        instrument: 'Vernier', 
+        spec: '12mm', 
+        tolerance: '±0.2mm',
+        inputType: 'measurement',
+        unit: 'mm',
+        nominalValue: 12,
+        upperLimit: 12.2,
+        lowerLimit: 11.8,
+        qcFileId: 'QC-FILE-003',
+        qcFileUrl: '/files/qc-parameters/thickness-2-measurement.pdf',
+        samples: Array(10).fill(null).map(() => ({
+          status: null,
+          measuredValue: null,
+        })),
+      },
     ],
   },
   'QC-2025-002': {
@@ -135,11 +191,77 @@ export const mockJobDetails = {
     qualityPlanNo: 'RD-7.3-07-A12',
     imteId: 'Visual & Jig-08',
     checkpoints: [
-      { id: 1, name: 'Thread Condition Check', instrument: 'Visual', spec: 'No Damage', tolerance: '-', samples: Array(10).fill(null) },
-      { id: 2, name: 'LuerLock Connector HP Check', instrument: 'Visual', spec: 'Proper Fit', tolerance: '-', samples: Array(10).fill(null) },
-      { id: 3, name: 'Irrigation Flow Checking', instrument: 'Jig-08', spec: 'Flow OK', tolerance: '-', samples: Array(10).fill(null) },
-      { id: 4, name: 'Block in Irrigation Path', instrument: 'Jig-08', spec: 'No Block', tolerance: '-', samples: Array(10).fill(null) },
-      { id: 5, name: 'Quantity Verification', instrument: 'Visual', spec: '39 Nos', tolerance: '-', samples: Array(10).fill(null) },
+      { 
+        id: 1, 
+        name: 'Thread Condition Check', 
+        instrument: 'Visual', 
+        spec: 'No Damage', 
+        tolerance: '-',
+        inputType: 'yesno', // Yes/No only
+        qcFileId: null,
+        qcFileUrl: null,
+        samples: Array(10).fill(null).map(() => ({
+          status: null,
+          measuredValue: null,
+        })),
+      },
+      { 
+        id: 2, 
+        name: 'LuerLock Connector HP Check', 
+        instrument: 'Visual', 
+        spec: 'Proper Fit', 
+        tolerance: '-',
+        inputType: 'yesno',
+        qcFileId: null,
+        qcFileUrl: null,
+        samples: Array(10).fill(null).map(() => ({
+          status: null,
+          measuredValue: null,
+        })),
+      },
+      { 
+        id: 3, 
+        name: 'Irrigation Flow Checking', 
+        instrument: 'Jig-08', 
+        spec: 'Flow OK', 
+        tolerance: '-',
+        inputType: 'yesno',
+        qcFileId: 'QC-FILE-FLOW',
+        qcFileUrl: '/files/qc-parameters/irrigation-flow.pdf',
+        samples: Array(10).fill(null).map(() => ({
+          status: null,
+          measuredValue: null,
+        })),
+      },
+      { 
+        id: 4, 
+        name: 'Block in Irrigation Path', 
+        instrument: 'Jig-08', 
+        spec: 'No Block', 
+        tolerance: '-',
+        inputType: 'yesno',
+        qcFileId: null,
+        qcFileUrl: null,
+        samples: Array(10).fill(null).map(() => ({
+          status: null,
+          measuredValue: null,
+        })),
+      },
+      { 
+        id: 5, 
+        name: 'Quantity Verification', 
+        instrument: 'Visual', 
+        spec: '39 Nos', 
+        tolerance: '-',
+        inputType: 'both', // Both measurement and Yes/No
+        unit: 'Nos',
+        qcFileId: null,
+        qcFileUrl: null,
+        samples: Array(10).fill(null).map(() => ({
+          status: null,
+          measuredValue: null,
+        })),
+      },
     ],
   },
 };
@@ -149,4 +271,32 @@ export const mockDashboardStats = {
   inProgress: 3,
   completedToday: 12,
   passRate: 97.5,
+};
+
+// Input type definitions
+export const INPUT_TYPES = {
+  MEASUREMENT: 'measurement', // Numeric input field only
+  YESNO: 'yesno',             // Yes/No toggle only
+  BOTH: 'both',               // Both measurement and Yes/No
+};
+
+// Helper to check if a measured value is within limits
+export const isWithinLimits = (value, checkpoint) => {
+  if (!checkpoint.upperLimit || !checkpoint.lowerLimit) {
+    return null; // No limits defined
+  }
+  const numValue = parseFloat(value);
+  if (isNaN(numValue)) {
+    return null;
+  }
+  return numValue >= checkpoint.lowerLimit && numValue <= checkpoint.upperLimit;
+};
+
+// Helper to auto-determine status based on measured value
+export const getStatusFromMeasuredValue = (value, checkpoint) => {
+  const withinLimits = isWithinLimits(value, checkpoint);
+  if (withinLimits === null) {
+    return null;
+  }
+  return withinLimits ? 'OK' : 'NG';
 };

@@ -1,4 +1,5 @@
 // Appasamy QC App - Theme Constants
+
 export const colors = {
   primary: '#0066CC',
   primaryDark: '#004C99',
@@ -35,4 +36,32 @@ export const borderRadius = {
   md: '8px',
   lg: '12px',
   xl: '16px',
+};
+
+export const spacing = {
+  xs: '4px',
+  sm: '8px',
+  md: '16px',
+  lg: '24px',
+  xl: '32px',
+  xxl: '48px',
+};
+
+export const typography = {
+  fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+  fontSize: {
+    xs: '11px',
+    sm: '12px',
+    base: '14px',
+    lg: '16px',
+    xl: '18px',
+    '2xl': '24px',
+    '3xl': '32px',
+  },
+  fontWeight: {
+    normal: 400,
+    medium: 500,
+    semibold: 600,
+    bold: 700,
+  },
 };

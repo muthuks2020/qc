@@ -1,5 +1,5 @@
 import React from 'react';
-import { colors } from '../../constants/theme';
+import { colors, shadows } from '../../constants/theme';
 
 export const Header = ({ title, subtitle, children }) => {
   return (
@@ -11,28 +11,28 @@ export const Header = ({ title, subtitle, children }) => {
     }}>
       <div>
         <h1 style={{
-          fontSize: '28px',
+          margin: 0,
+          fontSize: '24px',
           fontWeight: 700,
           color: colors.neutral[800],
-          marginBottom: '4px',
-          margin: 0,
         }}>
           {title}
         </h1>
         {subtitle && (
-          <p style={{ color: colors.neutral[500], fontSize: '14px', margin: '4px 0 0 0' }}>
+          <p style={{
+            margin: '8px 0 0 0',
+            fontSize: '14px',
+            color: colors.neutral[500],
+          }}>
             {subtitle}
           </p>
         )}
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-        {children}
-        <img
-          src="/uploads/appasamy-logo.png"
-          alt="Appasamy Associates"
-          className="app-logo"
-        />
-      </div>
+      {children && (
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          {children}
+        </div>
+      )}
     </div>
   );
 };

@@ -1,21 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { ClipboardCheck, Clock, CheckCircle2, TrendingUp, Plus, Filter, Search } from 'lucide-react';
+import { 
+  ClipboardList, 
+  Clock, 
+  CheckCircle2, 
+  TrendingUp,
+  Filter,
+} from 'lucide-react';
 import { colors } from '../constants/theme';
 import { Header, Button } from '../components/common';
 import { StatCard, JobCard } from '../components/dashboard';
 import { fetchPendingJobs, fetchDashboardStats } from '../api';
 
-export const DashboardPage = ({ onNavigateToInspection }) => {
+/**
+ * DashboardPage Component
+ * Main dashboard with KPIs and pending jobs queue
+ */
+const DashboardPage = ({ onNavigateToInspection }) => {
   const [jobs, setJobs] = useState([]);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('all'); // all, pending, in_progress
+  const [statusFilter, setStatusFilter] = useState('all');
 
   useEffect(() => {
-    loadData();
+    loadDashboardData();
   }, []);
 
-  const loadData = async () => {
+  const loadDashboardData = async () => {
     try {
       setLoading(true);
       const [jobsData, statsData] = await Promise.all([
@@ -32,8 +42,8 @@ export const DashboardPage = ({ onNavigateToInspection }) => {
   };
 
   const filteredJobs = jobs.filter(job => {
-    if (filter === 'all') return true;
-    return job.status === filter;
+    if (statusFilter === 'all') return true;
+    return job.status === statusFilter;
   });
 
   const handleJobClick = (job) => {
@@ -41,15 +51,45 @@ export const DashboardPage = ({ onNavigateToInspection }) => {
   };
 
   const statCards = [
-    { label: 'Pending Jobs', value: stats?.pendingJobs || 0, change: '+3', icon: ClipboardCheck, color: colors.primary },
-    { label: 'In Progress', value: stats?.inProgress || 0, change: '+1', icon: Clock, color: colors.warning },
-    { label: 'Completed Today', value: stats?.completedToday || 0, change: '+12%', icon: CheckCircle2, color: colors.success },
-    { label: 'Pass Rate', value: `${stats?.passRate || 0}%`, change: '+2.1%', icon: TrendingUp, color: colors.primary },
+    {
+      label: 'Pending Jobs',
+      value: stats?.pendingJobs || 0,
+      change: '+3',
+      icon: ClipboardList,
+      color: colors.primary,
+    },
+    {
+      label: 'In Progress',
+      value: stats?.inProgress || 0,
+      change: '+1',
+      icon: Clock,
+      color: colors.warning,
+    },
+    {
+      label: 'Completed Today',
+      value: stats?.completedToday || 0,
+      change: '+12%',
+      icon: CheckCircle2,
+      color: colors.success,
+    },
+    {
+      label: 'Pass Rate',
+      value: `${stats?.passRate || 0}%`,
+      change: '+2.1%',
+      icon: TrendingUp,
+      color: colors.primary,
+    },
   ];
 
   if (loading) {
     return (
-      <div style={{ padding: '32px 40px', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+      <div style={{ 
+        padding: '32px 40px', 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '50vh' 
+      }}>
         <p style={{ color: colors.neutral[500] }}>Loading dashboard...</p>
       </div>
     );
@@ -57,17 +97,16 @@ export const DashboardPage = ({ onNavigateToInspection }) => {
 
   return (
     <div style={{ padding: '32px 40px' }}>
-      <Header
-        title="Quality Control Dashboard"
+      {/* Header */}
+      <Header 
+        title="Quality Control Dashboard" 
         subtitle="Welcome back! Here's today's inspection overview."
       >
-        <Button
-          variant="primary"
-          icon={Plus}
-          onClick={() => onNavigateToInspection(null)}
-        >
-          New Inspection
-        </Button>
+        <img
+          src="/uploads/appasamy-logo.png"
+          alt="Appasamy Associates"
+          style={{ height: '40px' }}
+        />
       </Header>
 
       {/* Stats Grid */}
@@ -84,121 +123,70 @@ export const DashboardPage = ({ onNavigateToInspection }) => {
 
       {/* Jobs Section */}
       <div style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 400px',
-        gap: '24px',
+        background: 'white',
+        borderRadius: '16px',
+        padding: '24px',
+        border: `1px solid ${colors.neutral[100]}`,
       }}>
-        {/* Pending Jobs List */}
-        <div>
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: '20px',
+        {/* Section Header */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '20px',
+        }}>
+          <h3 style={{ 
+            margin: 0, 
+            fontSize: '16px', 
+            fontWeight: 600, 
+            color: colors.neutral[800] 
           }}>
-            <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 600, color: colors.neutral[800] }}>
-              QC Jobs Queue
-            </h2>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              {['all', 'pending', 'in_progress'].map((f) => (
-                <button
-                  key={f}
-                  onClick={() => setFilter(f)}
-                  style={{
-                    padding: '8px 16px',
-                    borderRadius: '8px',
-                    border: 'none',
-                    background: filter === f ? colors.primary : colors.neutral[100],
-                    color: filter === f ? 'white' : colors.neutral[600],
-                    fontSize: '13px',
-                    fontWeight: 500,
-                    cursor: 'pointer',
-                    textTransform: 'capitalize',
-                  }}
-                >
-                  {f.replace('_', ' ')}
-                </button>
-              ))}
-            </div>
+            Pending Inspections
+          </h3>
+          
+          {/* Status Filter */}
+          <div style={{ display: 'flex', gap: '8px' }}>
+            {['all', 'pending', 'in_progress'].map((status) => (
+              <button
+                key={status}
+                onClick={() => setStatusFilter(status)}
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: '6px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: '13px',
+                  fontWeight: 500,
+                  background: statusFilter === status ? colors.primary : colors.neutral[100],
+                  color: statusFilter === status ? 'white' : colors.neutral[600],
+                  transition: 'all 0.2s',
+                }}
+              >
+                {status === 'all' ? 'All' : status === 'in_progress' ? 'In Progress' : 'Pending'}
+              </button>
+            ))}
           </div>
+        </div>
 
-          {filteredJobs.length === 0 ? (
-            <div style={{
-              padding: '48px',
-              textAlign: 'center',
-              background: colors.neutral[50],
-              borderRadius: '12px',
-            }}>
-              <p style={{ color: colors.neutral[500] }}>No jobs found</p>
-            </div>
-          ) : (
+        {/* Jobs List */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {filteredJobs.length > 0 ? (
             filteredJobs.map((job) => (
               <JobCard key={job.id} job={job} onClick={handleJobClick} />
             ))
-          )}
-        </div>
-
-        {/* Quick Stats Panel */}
-        <div style={{
-          background: 'white',
-          borderRadius: '16px',
-          padding: '24px',
-          border: `1px solid ${colors.neutral[100]}`,
-          height: 'fit-content',
-        }}>
-          <h3 style={{ margin: '0 0 20px 0', fontSize: '16px', fontWeight: 600, color: colors.neutral[800] }}>
-            Today's Activity
-          </h3>
-          
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <ActivityItem label="Inspections Started" value="8" time="Last: 10 mins ago" />
-            <ActivityItem label="Inspections Completed" value="12" time="Last: 25 mins ago" />
-            <ActivityItem label="Items Rejected" value="3" time="Supplier: Precision Co." />
-            <ActivityItem label="Pending Approvals" value="5" time="Awaiting QA review" />
-          </div>
-
-          <div style={{ marginTop: '24px', paddingTop: '20px', borderTop: `1px solid ${colors.neutral[100]}` }}>
-            <h4 style={{ margin: '0 0 12px 0', fontSize: '14px', fontWeight: 600, color: colors.neutral[700] }}>
-              Top Suppliers Today
-            </h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <SupplierRow name="Sri Sakthi Ganesh Casting" jobs={4} passRate={98} />
-              <SupplierRow name="Precision Components" jobs={3} passRate={100} />
-              <SupplierRow name="Optical Lens Mfg" jobs={2} passRate={95} />
+          ) : (
+            <div style={{ 
+              textAlign: 'center', 
+              padding: '40px',
+              color: colors.neutral[500],
+            }}>
+              No jobs found
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
   );
 };
-
-// Helper Components
-const ActivityItem = ({ label, value, time }) => (
-  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-    <div>
-      <p style={{ margin: 0, fontSize: '14px', color: colors.neutral[700] }}>{label}</p>
-      <p style={{ margin: '2px 0 0 0', fontSize: '12px', color: colors.neutral[400] }}>{time}</p>
-    </div>
-    <span style={{ fontSize: '20px', fontWeight: 700, color: colors.neutral[800] }}>{value}</span>
-  </div>
-);
-
-const SupplierRow = ({ name, jobs, passRate }) => (
-  <div style={{
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '8px 12px',
-    background: colors.neutral[50],
-    borderRadius: '8px',
-  }}>
-    <span style={{ fontSize: '13px', color: colors.neutral[700] }}>{name}</span>
-    <div style={{ display: 'flex', gap: '12px', fontSize: '12px' }}>
-      <span style={{ color: colors.neutral[500] }}>{jobs} jobs</span>
-      <span style={{ color: colors.success, fontWeight: 600 }}>{passRate}%</span>
-    </div>
-  </div>
-);
 
 export default DashboardPage;
