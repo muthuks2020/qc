@@ -1,6 +1,5 @@
 // Admin Component Master Page
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { 
   Plus, 
   Search, 
@@ -102,7 +101,6 @@ const mockComponents = [
 ];
 
 const ComponentMasterPage = () => {
-  const navigate = useNavigate();
   const [components, setComponents] = useState(mockComponents);
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
@@ -118,11 +116,6 @@ const ComponentMasterPage = () => {
     return matchesSearch && matchesCategory;
   });
 
-  // Navigate to Add Component page
-  const handleAddComponent = () => {
-    navigate('/admin/component-master/new');
-  };
-
   return (
     <div style={styles.page}>
       <Header 
@@ -136,7 +129,7 @@ const ComponentMasterPage = () => {
             <Button variant="outline" icon={Download} size="sm">
               Export
             </Button>
-            <Button icon={Plus} onClick={handleAddComponent}>
+            <Button icon={Plus}>
               Add Component
             </Button>
           </div>
@@ -249,7 +242,7 @@ const ComponentCard = ({ component, onView }) => (
           Last inspected: {formatDate(component.lastInspected)}
         </span>
       ) : (
-        <span style={styles.notInspected}>Not yet inspected</span>
+        <span style={styles.neverInspected}>Not yet inspected</span>
       )}
     </div>
   </Card>
@@ -257,42 +250,46 @@ const ComponentCard = ({ component, onView }) => (
 
 // Component Detail Modal
 const ComponentDetailModal = ({ component, onClose }) => (
-  <div style={styles.modalOverlay} onClick={onClose}>
+  <div style={styles.modalBackdrop} onClick={onClose}>
     <div style={styles.modal} onClick={e => e.stopPropagation()}>
       <div style={styles.modalHeader}>
         <div>
           <h2 style={styles.modalTitle}>{component.name}</h2>
-          <span style={styles.modalSubtitle}>{component.id} • {component.productLine}</span>
+          <span style={styles.modalId}>{component.id}</span>
         </div>
-        <Badge type="status" value={component.status} />
+        <button style={styles.closeButton} onClick={onClose}>×</button>
       </div>
 
       <div style={styles.modalBody}>
-        <div style={styles.infoSection}>
-          <h4 style={styles.sectionTitle}>Basic Information</h4>
+        {/* General Info */}
+        <section style={styles.modalSection}>
+          <h3 style={styles.sectionTitle}>General Information</h3>
           <div style={styles.infoGrid}>
             <InfoItem label="Category" value={component.category} />
+            <InfoItem label="Product Line" value={component.productLine} />
             <InfoItem label="Vendor" value={component.vendor} />
             <InfoItem label="QC Plan" value={component.qcPlan} />
             <InfoItem label="Checkpoints" value={component.checkpoints} />
+            <InfoItem label="Status" value={<Badge type="status" value={component.status} size="sm" />} />
           </div>
-        </div>
+        </section>
 
-        <div style={styles.infoSection}>
-          <h4 style={styles.sectionTitle}>Specifications</h4>
-          <div style={styles.specList}>
+        {/* Specifications */}
+        <section style={styles.modalSection}>
+          <h3 style={styles.sectionTitle}>Specifications</h3>
+          <div style={styles.specsList}>
             {Object.entries(component.specifications).map(([key, value]) => (
               <div key={key} style={styles.specRow}>
                 <span style={styles.specLabel}>{key}</span>
-                <span style={styles.specValue}>{value}</span>
+                <span style={styles.specVal}>{value}</span>
               </div>
             ))}
           </div>
-        </div>
+        </section>
       </div>
 
       <div style={styles.modalFooter}>
-        <Button variant="outline" icon={Copy} size="sm">
+        <Button variant="outline" icon={Copy}>
           Duplicate
         </Button>
         <div style={styles.footerRight}>
@@ -403,28 +400,29 @@ const styles = {
   cardHeader: {
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    alignItems: 'center',
   },
 
   cardBadges: {
     display: 'flex',
-    gap: '8px',
     alignItems: 'center',
+    gap: '8px',
   },
 
   categoryTag: {
     fontSize: '11px',
     fontWeight: 500,
     color: colors.neutral[500],
+    padding: '2px 8px',
     background: colors.neutral[100],
-    padding: '4px 8px',
-    borderRadius: borderRadius.sm,
+    borderRadius: borderRadius.full,
   },
 
   componentId: {
+    fontFamily: 'monospace',
     fontSize: '12px',
-    fontWeight: 600,
-    color: colors.neutral[400],
+    color: colors.primary,
+    fontWeight: 500,
   },
 
   componentName: {
@@ -436,24 +434,21 @@ const styles = {
 
   componentMeta: {
     display: 'flex',
-    flexDirection: 'column',
-    gap: '4px',
-    fontSize: '13px',
+    flexWrap: 'wrap',
+    gap: '12px',
+    fontSize: '12px',
     color: colors.neutral[600],
   },
 
-  metaItem: {
-    display: 'flex',
-    gap: '8px',
-  },
+  metaItem: {},
 
   specPreview: {
-    padding: '12px',
-    background: colors.neutral[50],
-    borderRadius: borderRadius.md,
     display: 'flex',
     flexDirection: 'column',
     gap: '6px',
+    padding: '12px',
+    background: colors.neutral[50],
+    borderRadius: borderRadius.md,
   },
 
   specItem: {
@@ -478,12 +473,12 @@ const styles = {
   },
 
   lastInspected: {
-    fontSize: '12px',
+    fontSize: '11px',
     color: colors.neutral[500],
   },
 
-  notInspected: {
-    fontSize: '12px',
+  neverInspected: {
+    fontSize: '11px',
     color: colors.warning,
     fontStyle: 'italic',
   },
@@ -494,11 +489,11 @@ const styles = {
     color: colors.neutral[500],
   },
 
-  // Modal styles
-  modalOverlay: {
+  // Modal Styles
+  modalBackdrop: {
     position: 'fixed',
     inset: 0,
-    background: 'rgba(0, 0, 0, 0.5)',
+    background: 'rgba(0,0,0,0.5)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -511,9 +506,10 @@ const styles = {
     borderRadius: borderRadius.xl,
     width: '100%',
     maxWidth: '600px',
-    maxHeight: '90vh',
-    overflow: 'auto',
-    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+    maxHeight: '80vh',
+    overflow: 'hidden',
+    display: 'flex',
+    flexDirection: 'column',
   },
 
   modalHeader: {
@@ -531,25 +527,40 @@ const styles = {
     margin: 0,
   },
 
-  modalSubtitle: {
+  modalId: {
     fontSize: '13px',
+    color: colors.primary,
+    fontFamily: 'monospace',
+  },
+
+  closeButton: {
+    width: '32px',
+    height: '32px',
+    borderRadius: borderRadius.md,
+    border: 'none',
+    background: colors.neutral[100],
+    fontSize: '20px',
     color: colors.neutral[500],
-    marginTop: '4px',
+    cursor: 'pointer',
   },
 
   modalBody: {
     padding: '24px',
+    overflowY: 'auto',
+    flex: 1,
   },
 
-  infoSection: {
+  modalSection: {
     marginBottom: '24px',
   },
 
   sectionTitle: {
     fontSize: '14px',
     fontWeight: 600,
-    color: colors.neutral[700],
+    color: colors.neutral[800],
     marginBottom: '16px',
+    paddingBottom: '8px',
+    borderBottom: `1px solid ${colors.neutral[100]}`,
   },
 
   infoGrid: {
@@ -571,20 +582,20 @@ const styles = {
 
   infoValue: {
     fontSize: '14px',
-    fontWeight: 500,
     color: colors.neutral[800],
+    fontWeight: 500,
   },
 
-  specList: {
+  specsList: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '12px',
+    gap: '8px',
   },
 
   specRow: {
     display: 'flex',
     justifyContent: 'space-between',
-    padding: '8px 12px',
+    padding: '10px 14px',
     background: colors.neutral[50],
     borderRadius: borderRadius.md,
   },
@@ -595,9 +606,16 @@ const styles = {
     textTransform: 'capitalize',
   },
 
+  specVal: {
+    fontSize: '13px',
+    color: colors.neutral[800],
+    fontWeight: 500,
+  },
+
   modalFooter: {
     display: 'flex',
     justifyContent: 'space-between',
+    alignItems: 'center',
     padding: '16px 24px',
     borderTop: `1px solid ${colors.neutral[100]}`,
     background: colors.neutral[50],

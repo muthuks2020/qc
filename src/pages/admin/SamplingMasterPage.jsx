@@ -1,5 +1,6 @@
-// Admin Sampling Master Page
+// Admin Component Master Page
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Plus, 
   Search, 
@@ -9,79 +10,124 @@ import {
   Download,
   Upload,
   Eye,
-  MoreVertical,
-  CheckCircle2
+  Package,
+  Settings,
+  Copy
 } from 'lucide-react';
 import { Header, Card, Button, Badge } from '../../components/common';
 import { colors, borderRadius } from '../../constants/theme';
 
-// Mock sampling plans data
-const mockSamplingPlans = [
+// Mock components data
+const mockComponents = [
   {
-    id: 'SP-001',
-    name: 'Critical Components - Level I',
-    aqlLevel: 'Level I',
-    inspectionLevel: 'Normal',
-    lotSizeRange: '91-150',
-    sampleSize: 20,
-    acceptReject: { accept: 1, reject: 2 },
+    id: 'BSC-001',
+    name: 'Ultrasound Transducer Head',
+    category: 'Critical Assembly',
+    productLine: 'B-SCAN',
+    vendor: 'Precision Components Ltd',
+    qcPlan: 'SP-001',
+    checkpoints: 12,
+    specifications: {
+      material: 'Piezoelectric Crystal',
+      dimension: '25mm x 15mm x 8mm',
+      tolerance: '±0.1mm',
+    },
     status: 'active',
-    products: 24,
-    lastModified: '2026-01-25',
+    lastInspected: '2026-01-30',
   },
   {
-    id: 'SP-002',
-    name: 'Electrical Assembly - Level II',
-    aqlLevel: 'Level II',
-    inspectionLevel: 'Tightened',
-    lotSizeRange: '151-280',
-    sampleSize: 32,
-    acceptReject: { accept: 2, reject: 3 },
+    id: 'BSC-002',
+    name: 'Probe Cable Assembly',
+    category: 'Electrical',
+    productLine: 'B-SCAN',
+    vendor: 'ElectroCables India',
+    qcPlan: 'SP-002',
+    checkpoints: 8,
+    specifications: {
+      material: 'Copper with PVC Sheath',
+      length: '2.5m',
+      tolerance: '±50mm',
+    },
     status: 'active',
-    products: 18,
-    lastModified: '2026-01-22',
+    lastInspected: '2026-01-29',
   },
   {
-    id: 'SP-003',
-    name: 'Visual Inspection - Standard',
-    aqlLevel: 'Level III',
-    inspectionLevel: 'Reduced',
-    lotSizeRange: '51-90',
-    sampleSize: 13,
-    acceptReject: { accept: 1, reject: 2 },
+    id: 'BSC-003',
+    name: 'Display Panel Module',
+    category: 'Electronics',
+    productLine: 'B-SCAN',
+    vendor: 'TechDisplay Corp',
+    qcPlan: 'SP-002',
+    checkpoints: 15,
+    specifications: {
+      type: 'LCD 7-inch',
+      resolution: '1024x768',
+      brightness: '350 nits',
+    },
+    status: 'active',
+    lastInspected: '2026-01-28',
+  },
+  {
+    id: 'BSC-004',
+    name: 'Outer Casing - Top',
+    category: 'Mechanical',
+    productLine: 'B-SCAN',
+    vendor: 'Plastics Pro Ltd',
+    qcPlan: 'SP-003',
+    checkpoints: 6,
+    specifications: {
+      material: 'ABS Plastic',
+      color: 'Medical White',
+      finish: 'Matte',
+    },
     status: 'draft',
-    products: 0,
-    lastModified: '2026-01-28',
+    lastInspected: null,
   },
   {
-    id: 'SP-004',
-    name: 'High-Precision Parts',
-    aqlLevel: 'Special S-3',
-    inspectionLevel: 'Normal',
-    lotSizeRange: '281-500',
-    sampleSize: 50,
-    acceptReject: { accept: 3, reject: 4 },
+    id: 'BSC-005',
+    name: 'Power Supply Unit',
+    category: 'Electrical',
+    productLine: 'B-SCAN',
+    vendor: 'PowerTech Systems',
+    qcPlan: 'SP-001',
+    checkpoints: 10,
+    specifications: {
+      input: '100-240V AC',
+      output: '12V DC, 5A',
+      certification: 'CE, UL',
+    },
     status: 'active',
-    products: 12,
-    lastModified: '2026-01-20',
+    lastInspected: '2026-01-27',
   },
 ];
 
-const SamplingMasterPage = () => {
-  const [samplingPlans, setSamplingPlans] = useState(mockSamplingPlans);
+const ComponentMasterPage = () => {
+  const navigate = useNavigate();
+  const [components, setComponents] = useState(mockComponents);
   const [searchTerm, setSearchTerm] = useState('');
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [selectedComponent, setSelectedComponent] = useState(null);
 
-  const filteredPlans = samplingPlans.filter(plan => 
-    plan.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    plan.id.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const categories = ['all', ...new Set(mockComponents.map(c => c.category))];
+
+  const filteredComponents = components.filter(comp => {
+    const matchesSearch = 
+      comp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      comp.id.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = categoryFilter === 'all' || comp.category === categoryFilter;
+    return matchesSearch && matchesCategory;
+  });
+
+  // Navigate to Add Component page
+  const handleAddComponent = () => {
+    navigate('/admin/component-master/new');
+  };
 
   return (
     <div style={styles.page}>
       <Header 
-        title="Sampling Master" 
-        subtitle="Configure sampling plans and AQL levels for quality inspection"
+        title="Component Master" 
+        subtitle="Manage component specifications and QC requirements"
         actions={
           <div style={styles.headerActions}>
             <Button variant="outline" icon={Upload} size="sm">
@@ -90,8 +136,8 @@ const SamplingMasterPage = () => {
             <Button variant="outline" icon={Download} size="sm">
               Export
             </Button>
-            <Button icon={Plus} onClick={() => setShowAddModal(true)}>
-              Add Sampling Plan
+            <Button icon={Plus} onClick={handleAddComponent}>
+              Add Component
             </Button>
           </div>
         }
@@ -105,150 +151,179 @@ const SamplingMasterPage = () => {
               <Search size={18} style={styles.searchIcon} />
               <input
                 type="text"
-                placeholder="Search sampling plans..."
+                placeholder="Search components..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 style={styles.searchInput}
               />
             </div>
-            <div style={styles.filterButtons}>
-              <Button variant="ghost" size="sm" icon={Filter}>
-                Filter
-              </Button>
+            <div style={styles.categoryFilters}>
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => setCategoryFilter(category)}
+                  style={{
+                    ...styles.categoryButton,
+                    background: categoryFilter === category ? colors.primary : 'transparent',
+                    color: categoryFilter === category ? 'white' : colors.neutral[600],
+                    borderColor: categoryFilter === category ? colors.primary : colors.neutral[200],
+                  }}
+                >
+                  {category === 'all' ? 'All Categories' : category}
+                </button>
+              ))}
             </div>
           </div>
         </Card>
 
-        {/* Summary Cards */}
-        <div style={styles.summaryGrid}>
-          <SummaryCard 
-            label="Total Plans" 
-            value={samplingPlans.length} 
-            color={colors.primary} 
-          />
-          <SummaryCard 
-            label="Active Plans" 
-            value={samplingPlans.filter(p => p.status === 'active').length} 
-            color={colors.success} 
-          />
-          <SummaryCard 
-            label="Draft Plans" 
-            value={samplingPlans.filter(p => p.status === 'draft').length} 
-            color={colors.warning} 
-          />
-          <SummaryCard 
-            label="Products Covered" 
-            value={samplingPlans.reduce((sum, p) => sum + p.products, 0)} 
-            color={colors.accent} 
-          />
+        {/* Components Grid */}
+        <div style={styles.componentsGrid}>
+          {filteredComponents.map((component) => (
+            <ComponentCard 
+              key={component.id}
+              component={component}
+              onView={() => setSelectedComponent(component)}
+            />
+          ))}
         </div>
 
-        {/* Sampling Plans Table */}
-        <Card padding="0">
-          <div style={styles.tableContainer}>
-            <table style={styles.table}>
-              <thead>
-                <tr>
-                  <th style={styles.th}>Plan ID</th>
-                  <th style={styles.th}>Name</th>
-                  <th style={styles.th}>AQL Level</th>
-                  <th style={styles.th}>Inspection Level</th>
-                  <th style={styles.th}>Lot Size Range</th>
-                  <th style={styles.th}>Sample Size</th>
-                  <th style={styles.th}>Accept/Reject</th>
-                  <th style={styles.th}>Status</th>
-                  <th style={styles.th}>Products</th>
-                  <th style={styles.thAction}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredPlans.map((plan) => (
-                  <tr key={plan.id} style={styles.tr}>
-                    <td style={styles.td}>
-                      <span style={styles.planId}>{plan.id}</span>
-                    </td>
-                    <td style={styles.td}>
-                      <span style={styles.planName}>{plan.name}</span>
-                    </td>
-                    <td style={styles.td}>{plan.aqlLevel}</td>
-                    <td style={styles.td}>{plan.inspectionLevel}</td>
-                    <td style={styles.td}>{plan.lotSizeRange}</td>
-                    <td style={styles.td}>
-                      <span style={styles.sampleSize}>{plan.sampleSize}</span>
-                    </td>
-                    <td style={styles.td}>
-                      <span style={styles.acceptReject}>
-                        <span style={{ color: colors.success }}>Ac: {plan.acceptReject.accept}</span>
-                        {' / '}
-                        <span style={{ color: colors.danger }}>Re: {plan.acceptReject.reject}</span>
-                      </span>
-                    </td>
-                    <td style={styles.td}>
-                      <Badge type="status" value={plan.status} size="sm" />
-                    </td>
-                    <td style={styles.td}>{plan.products}</td>
-                    <td style={styles.tdAction}>
-                      <div style={styles.actions}>
-                        <button style={styles.actionButton} title="View">
-                          <Eye size={16} />
-                        </button>
-                        <button style={styles.actionButton} title="Edit">
-                          <Edit2 size={16} />
-                        </button>
-                        <button style={{ ...styles.actionButton, color: colors.danger }} title="Delete">
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {filteredPlans.length === 0 && (
+        {filteredComponents.length === 0 && (
+          <Card>
             <div style={styles.emptyState}>
-              <p>No sampling plans found matching your search.</p>
+              <Package size={48} color={colors.neutral[300]} />
+              <h3>No Components Found</h3>
+              <p>No components match your search criteria.</p>
             </div>
-          )}
-        </Card>
-
-        {/* AQL Reference Info */}
-        <Card>
-          <h3 style={styles.infoTitle}>AQL Reference Guide</h3>
-          <p style={styles.infoText}>
-            AQL (Acceptable Quality Level) is the quality level that is the worst tolerable. 
-            The sampling plans above are based on ISO 2859-1 / ANSI/ASQ Z1.4 standards.
-          </p>
-          <div style={styles.infoGrid}>
-            <div style={styles.infoItem}>
-              <strong>Level I:</strong> Reduced discrimination
-            </div>
-            <div style={styles.infoItem}>
-              <strong>Level II:</strong> Normal (most common)
-            </div>
-            <div style={styles.infoItem}>
-              <strong>Level III:</strong> More discrimination
-            </div>
-            <div style={styles.infoItem}>
-              <strong>Special (S-1 to S-4):</strong> For destructive testing
-            </div>
-          </div>
-        </Card>
+          </Card>
+        )}
       </div>
+
+      {/* Component Detail Modal */}
+      {selectedComponent && (
+        <ComponentDetailModal 
+          component={selectedComponent}
+          onClose={() => setSelectedComponent(null)}
+        />
+      )}
     </div>
   );
 };
 
-// Summary Card Component
-const SummaryCard = ({ label, value, color }) => (
-  <Card>
-    <div style={styles.summaryCard}>
-      <span style={{ ...styles.summaryValue, color }}>{value}</span>
-      <span style={styles.summaryLabel}>{label}</span>
+// Component Card
+const ComponentCard = ({ component, onView }) => (
+  <Card hover onClick={onView} style={styles.componentCard}>
+    <div style={styles.cardHeader}>
+      <div style={styles.cardBadges}>
+        <Badge type="status" value={component.status} size="sm" />
+        <span style={styles.categoryTag}>{component.category}</span>
+      </div>
+      <span style={styles.componentId}>{component.id}</span>
+    </div>
+
+    <h3 style={styles.componentName}>{component.name}</h3>
+
+    <div style={styles.componentMeta}>
+      <div style={styles.metaItem}>
+        <strong>Vendor:</strong> {component.vendor}
+      </div>
+      <div style={styles.metaItem}>
+        <strong>QC Plan:</strong> {component.qcPlan}
+      </div>
+      <div style={styles.metaItem}>
+        <strong>Checkpoints:</strong> {component.checkpoints}
+      </div>
+    </div>
+
+    <div style={styles.specPreview}>
+      {Object.entries(component.specifications).slice(0, 2).map(([key, value]) => (
+        <div key={key} style={styles.specItem}>
+          <span style={styles.specKey}>{key}:</span>
+          <span style={styles.specValue}>{value}</span>
+        </div>
+      ))}
+    </div>
+
+    <div style={styles.cardFooter}>
+      {component.lastInspected ? (
+        <span style={styles.lastInspected}>
+          Last inspected: {formatDate(component.lastInspected)}
+        </span>
+      ) : (
+        <span style={styles.notInspected}>Not yet inspected</span>
+      )}
     </div>
   </Card>
 );
+
+// Component Detail Modal
+const ComponentDetailModal = ({ component, onClose }) => (
+  <div style={styles.modalOverlay} onClick={onClose}>
+    <div style={styles.modal} onClick={e => e.stopPropagation()}>
+      <div style={styles.modalHeader}>
+        <div>
+          <h2 style={styles.modalTitle}>{component.name}</h2>
+          <span style={styles.modalSubtitle}>{component.id} • {component.productLine}</span>
+        </div>
+        <Badge type="status" value={component.status} />
+      </div>
+
+      <div style={styles.modalBody}>
+        <div style={styles.infoSection}>
+          <h4 style={styles.sectionTitle}>Basic Information</h4>
+          <div style={styles.infoGrid}>
+            <InfoItem label="Category" value={component.category} />
+            <InfoItem label="Vendor" value={component.vendor} />
+            <InfoItem label="QC Plan" value={component.qcPlan} />
+            <InfoItem label="Checkpoints" value={component.checkpoints} />
+          </div>
+        </div>
+
+        <div style={styles.infoSection}>
+          <h4 style={styles.sectionTitle}>Specifications</h4>
+          <div style={styles.specList}>
+            {Object.entries(component.specifications).map(([key, value]) => (
+              <div key={key} style={styles.specRow}>
+                <span style={styles.specLabel}>{key}</span>
+                <span style={styles.specValue}>{value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div style={styles.modalFooter}>
+        <Button variant="outline" icon={Copy} size="sm">
+          Duplicate
+        </Button>
+        <div style={styles.footerRight}>
+          <Button variant="ghost" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button icon={Edit2}>
+            Edit Component
+          </Button>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+// Info Item Component
+const InfoItem = ({ label, value }) => (
+  <div style={styles.infoItem}>
+    <span style={styles.infoLabel}>{label}</span>
+    <span style={styles.infoValue}>{value}</span>
+  </div>
+);
+
+// Utility functions
+const formatDate = (dateStr) => {
+  return new Date(dateStr).toLocaleDateString('en-IN', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  });
+};
 
 const styles = {
   page: {
@@ -270,8 +345,7 @@ const styles = {
 
   toolbar: {
     display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: 'column',
     gap: '16px',
   },
 
@@ -279,9 +353,7 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: '8px',
-    flex: 1,
-    maxWidth: '400px',
-    padding: '8px 16px',
+    padding: '10px 16px',
     background: colors.neutral[50],
     borderRadius: borderRadius.lg,
     border: `1px solid ${colors.neutral[200]}`,
@@ -300,163 +372,241 @@ const styles = {
     color: colors.neutral[700],
   },
 
-  filterButtons: {
+  categoryFilters: {
     display: 'flex',
     gap: '8px',
+    flexWrap: 'wrap',
   },
 
-  summaryGrid: {
+  categoryButton: {
+    padding: '8px 16px',
+    fontSize: '13px',
+    fontWeight: 500,
+    borderRadius: borderRadius.md,
+    border: '1px solid',
+    cursor: 'pointer',
+    transition: 'all 0.2s',
+  },
+
+  componentsGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-    gap: '16px',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
+    gap: '20px',
   },
 
-  summaryCard: {
+  componentCard: {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',
-    gap: '4px',
-    padding: '8px',
+    gap: '12px',
   },
 
-  summaryValue: {
-    fontSize: '28px',
-    fontWeight: 700,
+  cardHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
   },
 
-  summaryLabel: {
-    fontSize: '13px',
-    color: colors.neutral[500],
-  },
-
-  tableContainer: {
-    overflowX: 'auto',
-  },
-
-  table: {
-    width: '100%',
-    borderCollapse: 'collapse',
-  },
-
-  th: {
-    textAlign: 'left',
-    padding: '14px 16px',
-    fontSize: '12px',
-    fontWeight: 600,
-    color: colors.neutral[500],
-    textTransform: 'uppercase',
-    letterSpacing: '0.5px',
-    borderBottom: `1px solid ${colors.neutral[100]}`,
-    background: colors.neutral[50],
-    whiteSpace: 'nowrap',
-  },
-
-  thAction: {
-    textAlign: 'center',
-    padding: '14px 16px',
-    fontSize: '12px',
-    fontWeight: 600,
-    color: colors.neutral[500],
-    textTransform: 'uppercase',
-    letterSpacing: '0.5px',
-    borderBottom: `1px solid ${colors.neutral[100]}`,
-    background: colors.neutral[50],
-    width: '120px',
-  },
-
-  tr: {
-    transition: 'background 0.15s',
-  },
-
-  td: {
-    padding: '14px 16px',
-    fontSize: '14px',
-    color: colors.neutral[700],
-    borderBottom: `1px solid ${colors.neutral[100]}`,
-    whiteSpace: 'nowrap',
-  },
-
-  tdAction: {
-    padding: '14px 16px',
-    borderBottom: `1px solid ${colors.neutral[100]}`,
-    textAlign: 'center',
-  },
-
-  planId: {
-    fontFamily: 'monospace',
-    fontSize: '13px',
-    color: colors.primary,
-    fontWeight: 500,
-  },
-
-  planName: {
-    fontWeight: 500,
-    color: colors.neutral[800],
-  },
-
-  sampleSize: {
-    fontWeight: 600,
-    color: colors.primary,
-  },
-
-  acceptReject: {
-    fontSize: '13px',
-    fontWeight: 500,
-  },
-
-  actions: {
+  cardBadges: {
     display: 'flex',
     gap: '8px',
-    justifyContent: 'center',
-  },
-
-  actionButton: {
-    width: '32px',
-    height: '32px',
-    borderRadius: borderRadius.md,
-    border: 'none',
-    background: colors.neutral[50],
-    color: colors.neutral[500],
-    cursor: 'pointer',
-    display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
-    transition: 'all 0.15s',
   },
 
-  emptyState: {
-    padding: '48px',
-    textAlign: 'center',
+  categoryTag: {
+    fontSize: '11px',
+    fontWeight: 500,
     color: colors.neutral[500],
+    background: colors.neutral[100],
+    padding: '4px 8px',
+    borderRadius: borderRadius.sm,
   },
 
-  infoTitle: {
+  componentId: {
+    fontSize: '12px',
+    fontWeight: 600,
+    color: colors.neutral[400],
+  },
+
+  componentName: {
     fontSize: '16px',
     fontWeight: 600,
     color: colors.neutral[800],
-    margin: '0 0 12px',
+    margin: 0,
   },
 
-  infoText: {
-    fontSize: '14px',
+  componentMeta: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '4px',
+    fontSize: '13px',
     color: colors.neutral[600],
-    margin: '0 0 16px',
-    lineHeight: 1.6,
+  },
+
+  metaItem: {
+    display: 'flex',
+    gap: '8px',
+  },
+
+  specPreview: {
+    padding: '12px',
+    background: colors.neutral[50],
+    borderRadius: borderRadius.md,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '6px',
+  },
+
+  specItem: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    fontSize: '12px',
+  },
+
+  specKey: {
+    color: colors.neutral[500],
+    textTransform: 'capitalize',
+  },
+
+  specValue: {
+    color: colors.neutral[700],
+    fontWeight: 500,
+  },
+
+  cardFooter: {
+    paddingTop: '12px',
+    borderTop: `1px solid ${colors.neutral[100]}`,
+  },
+
+  lastInspected: {
+    fontSize: '12px',
+    color: colors.neutral[500],
+  },
+
+  notInspected: {
+    fontSize: '12px',
+    color: colors.warning,
+    fontStyle: 'italic',
+  },
+
+  emptyState: {
+    textAlign: 'center',
+    padding: '48px 24px',
+    color: colors.neutral[500],
+  },
+
+  // Modal styles
+  modalOverlay: {
+    position: 'fixed',
+    inset: 0,
+    background: 'rgba(0, 0, 0, 0.5)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1000,
+    padding: '24px',
+  },
+
+  modal: {
+    background: 'white',
+    borderRadius: borderRadius.xl,
+    width: '100%',
+    maxWidth: '600px',
+    maxHeight: '90vh',
+    overflow: 'auto',
+    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+  },
+
+  modalHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    padding: '24px',
+    borderBottom: `1px solid ${colors.neutral[100]}`,
+  },
+
+  modalTitle: {
+    fontSize: '20px',
+    fontWeight: 600,
+    color: colors.neutral[800],
+    margin: 0,
+  },
+
+  modalSubtitle: {
+    fontSize: '13px',
+    color: colors.neutral[500],
+    marginTop: '4px',
+  },
+
+  modalBody: {
+    padding: '24px',
+  },
+
+  infoSection: {
+    marginBottom: '24px',
+  },
+
+  sectionTitle: {
+    fontSize: '14px',
+    fontWeight: 600,
+    color: colors.neutral[700],
+    marginBottom: '16px',
   },
 
   infoGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-    gap: '12px',
+    gridTemplateColumns: 'repeat(2, 1fr)',
+    gap: '16px',
   },
 
   infoItem: {
-    fontSize: '13px',
-    color: colors.neutral[600],
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '4px',
+  },
+
+  infoLabel: {
+    fontSize: '12px',
+    color: colors.neutral[500],
+  },
+
+  infoValue: {
+    fontSize: '14px',
+    fontWeight: 500,
+    color: colors.neutral[800],
+  },
+
+  specList: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px',
+  },
+
+  specRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
     padding: '8px 12px',
     background: colors.neutral[50],
     borderRadius: borderRadius.md,
   },
+
+  specLabel: {
+    fontSize: '13px',
+    color: colors.neutral[600],
+    textTransform: 'capitalize',
+  },
+
+  modalFooter: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: '16px 24px',
+    borderTop: `1px solid ${colors.neutral[100]}`,
+    background: colors.neutral[50],
+  },
+
+  footerRight: {
+    display: 'flex',
+    gap: '8px',
+  },
 };
 
-export default SamplingMasterPage;
+export default ComponentMasterPage;

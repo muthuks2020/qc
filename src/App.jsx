@@ -10,6 +10,7 @@ import LoginPage from './pages/auth/LoginPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import SamplingMasterPage from './pages/admin/SamplingMasterPage';
 import ComponentMasterPage from './pages/admin/ComponentMasterPage';
+import ComponentMasterEntryPage from './pages/admin/component-master/ComponentMasterEntryPage';
 import MakerDashboard from './pages/maker/MakerDashboard';
 import CheckerDashboard from './pages/checker/CheckerDashboard';
 import { colors } from './constants/theme';
@@ -66,7 +67,9 @@ const AppRoutes = () => {
         element={<SSOCallback />} 
       />
 
-      {/* Admin Routes */}
+      {/* ============================================
+          ADMIN ROUTES
+          ============================================ */}
       <Route
         path="/admin"
         element={
@@ -87,6 +90,8 @@ const AppRoutes = () => {
           </AdminRoute>
         }
       />
+      
+      {/* Component Master - List View */}
       <Route
         path="/admin/component-master"
         element={
@@ -97,6 +102,31 @@ const AppRoutes = () => {
           </AdminRoute>
         }
       />
+      
+      {/* Component Master - New Entry (NEW ROUTE) */}
+      <Route
+        path="/admin/component-master/new"
+        element={
+          <AdminRoute>
+            <MainLayout role="admin" onLogout={handleLogout}>
+              <ComponentMasterEntryPage />
+            </MainLayout>
+          </AdminRoute>
+        }
+      />
+      
+      {/* Component Master - Edit Entry (NEW ROUTE) */}
+      <Route
+        path="/admin/component-master/edit/:id"
+        element={
+          <AdminRoute>
+            <MainLayout role="admin" onLogout={handleLogout}>
+              <ComponentMasterEntryPage />
+            </MainLayout>
+          </AdminRoute>
+        }
+      />
+      
       <Route
         path="/admin/users"
         element={
@@ -128,7 +158,9 @@ const AppRoutes = () => {
         }
       />
 
-      {/* Maker (QC Person) Routes */}
+      {/* ============================================
+          MAKER (QC PERSON) ROUTES
+          ============================================ */}
       <Route
         path="/maker"
         element={
@@ -190,7 +222,9 @@ const AppRoutes = () => {
         }
       />
 
-      {/* Checker (Validator) Routes */}
+      {/* ============================================
+          CHECKER (VALIDATOR) ROUTES
+          ============================================ */}
       <Route
         path="/checker"
         element={
@@ -376,8 +410,11 @@ function App() {
   );
 }
 
-// Styles
+// ============================================
+// STYLES
+// ============================================
 const styles = {
+  // Loading Screen Styles
   loadingContainer: {
     minHeight: '100vh',
     display: 'flex',
@@ -415,6 +452,7 @@ const styles = {
     fontWeight: 500,
   },
   
+  // Placeholder Page Styles
   placeholderContainer: {
     padding: '64px 40px',
     display: 'flex',
@@ -453,6 +491,7 @@ const styles = {
     letterSpacing: '0.5px',
   },
   
+  // Not Found Page Styles
   notFoundContainer: {
     minHeight: '100vh',
     display: 'flex',
@@ -470,23 +509,21 @@ const styles = {
     fontWeight: 700,
     color: colors.neutral[200],
     lineHeight: 1,
-    marginBottom: '8px',
+    marginBottom: '16px',
   },
   notFoundTitle: {
     fontSize: '24px',
-    fontWeight: 700,
+    fontWeight: 600,
     color: colors.neutral[800],
-    marginBottom: '12px',
+    marginBottom: '8px',
   },
   notFoundText: {
     fontSize: '14px',
     color: colors.neutral[500],
     marginBottom: '24px',
-    lineHeight: 1.6,
   },
   notFoundButton: {
-    display: 'inline-block',
-    padding: '12px 32px',
+    padding: '12px 24px',
     fontSize: '14px',
     fontWeight: 600,
     color: 'white',
@@ -494,33 +531,17 @@ const styles = {
     border: 'none',
     borderRadius: '8px',
     cursor: 'pointer',
-    transition: 'all 0.2s',
+    transition: 'all 0.2s ease',
   },
 };
 
-// Add global CSS for animations
-const globalStyles = document.createElement('style');
-globalStyles.textContent = `
+// Add keyframe animation for spinner
+const styleSheet = document.createElement('style');
+styleSheet.textContent = `
   @keyframes spin {
     to { transform: rotate(360deg); }
   }
-  
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-  
-  #root {
-    min-height: 100vh;
-  }
 `;
-document.head.appendChild(globalStyles);
+document.head.appendChild(styleSheet);
 
 export default App;
