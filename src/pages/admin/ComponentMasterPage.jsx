@@ -1,612 +1,526 @@
-// Admin Component Master Page
-import React, { useState } from 'react';
+/**
+ * Component Master Page
+ * Main listing page for all components with search, filters, and pagination
+ */
+
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Plus, 
-  Search, 
-  Filter, 
-  Edit2, 
-  Trash2, 
-  Download,
+import {
+  Search,
+  Plus,
   Upload,
+  Download,
+  HelpCircle,
+  Bell,
+  ChevronLeft,
+  ChevronRight,
+  Loader2,
+  AlertCircle,
+  RefreshCw,
   Eye,
   Package,
-  Settings,
-  Copy
 } from 'lucide-react';
-import { Header, Card, Button, Badge } from '../../components/common';
-import { colors, borderRadius } from '../../constants/theme';
+import ComponentDetailModal from './component-master/components/ComponentDetailModal';
+import { 
+  fetchComponents, 
+  deleteComponent, 
+  duplicateComponent,
+  exportComponents,
+  importComponents,
+} from './component-master/api/componentMasterApi';
+import './component-master/styles/ComponentMasterPage.css';
 
-// Mock components data
-const mockComponents = [
-  {
-    id: 'BSC-001',
-    name: 'Ultrasound Transducer Head',
-    category: 'Critical Assembly',
-    productLine: 'B-SCAN',
-    vendor: 'Precision Components Ltd',
-    qcPlan: 'SP-001',
-    checkpoints: 12,
-    specifications: {
-      material: 'Piezoelectric Crystal',
-      dimension: '25mm x 15mm x 8mm',
-      tolerance: '±0.1mm',
-    },
-    status: 'active',
-    lastInspected: '2026-01-30',
-  },
-  {
-    id: 'BSC-002',
-    name: 'Probe Cable Assembly',
-    category: 'Electrical',
-    productLine: 'B-SCAN',
-    vendor: 'ElectroCables India',
-    qcPlan: 'SP-002',
-    checkpoints: 8,
-    specifications: {
-      material: 'Copper with PVC Sheath',
-      length: '2.5m',
-      tolerance: '±50mm',
-    },
-    status: 'active',
-    lastInspected: '2026-01-29',
-  },
-  {
-    id: 'BSC-003',
-    name: 'Display Panel Module',
-    category: 'Electronics',
-    productLine: 'B-SCAN',
-    vendor: 'TechDisplay Corp',
-    qcPlan: 'SP-002',
-    checkpoints: 15,
-    specifications: {
-      type: 'LCD 7-inch',
-      resolution: '1024x768',
-      brightness: '350 nits',
-    },
-    status: 'active',
-    lastInspected: '2026-01-28',
-  },
-  {
-    id: 'BSC-004',
-    name: 'Outer Casing - Top',
-    category: 'Mechanical',
-    productLine: 'B-SCAN',
-    vendor: 'Plastics Pro Ltd',
-    qcPlan: 'SP-003',
-    checkpoints: 6,
-    specifications: {
-      material: 'ABS Plastic',
-      color: 'Medical White',
-      finish: 'Matte',
-    },
-    status: 'draft',
-    lastInspected: null,
-  },
-  {
-    id: 'BSC-005',
-    name: 'Power Supply Unit',
-    category: 'Electrical',
-    productLine: 'B-SCAN',
-    vendor: 'PowerTech Systems',
-    qcPlan: 'SP-001',
-    checkpoints: 10,
-    specifications: {
-      input: '100-240V AC',
-      output: '12V DC, 5A',
-      certification: 'CE, UL',
-    },
-    status: 'active',
-    lastInspected: '2026-01-27',
-  },
+// ============================================
+// CATEGORY CONFIGURATION
+// ============================================
+const CATEGORIES = [
+  { id: 'all', label: 'All Categories' },
+  { id: 'critical_assembly', label: 'Critical Assembly' },
+  { id: 'electrical', label: 'Electrical' },
+  { id: 'electronics', label: 'Electronics' },
+  { id: 'mechanical', label: 'Mechanical' },
+  { id: 'optical', label: 'Optical' },
+  { id: 'plastic', label: 'Plastic' },
 ];
 
-const ComponentMasterPage = () => {
-  const navigate = useNavigate();
-  const [components, setComponents] = useState(mockComponents);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('all');
-  const [selectedComponent, setSelectedComponent] = useState(null);
+// ============================================
+// COMPONENT CARD
+// ============================================
+const ComponentCard = ({ component, onClick }) => {
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'active': return 'cmp-status-active';
+      case 'draft': return 'cmp-status-draft';
+      case 'inactive': return 'cmp-status-inactive';
+      default: return 'cmp-status-draft';
+    }
+  };
 
-  const categories = ['all', ...new Set(mockComponents.map(c => c.category))];
+  const getCategoryLabel = (category) => {
+    const cat = CATEGORIES.find(c => c.id === category);
+    return cat ? cat.label : category;
+  };
 
-  const filteredComponents = components.filter(comp => {
-    const matchesSearch = 
-      comp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      comp.id.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = categoryFilter === 'all' || comp.category === categoryFilter;
-    return matchesSearch && matchesCategory;
-  });
-
-  // Navigate to Add Component page
-  const handleAddComponent = () => {
-    navigate('/admin/component-master/new');
+  const formatDate = (dateString) => {
+    if (!dateString) return null;
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
   };
 
   return (
-    <div style={styles.page}>
-      <Header 
-        title="Component Master" 
-        subtitle="Manage component specifications and QC requirements"
-        actions={
-          <div style={styles.headerActions}>
-            <Button variant="outline" icon={Upload} size="sm">
-              Import
-            </Button>
-            <Button variant="outline" icon={Download} size="sm">
-              Export
-            </Button>
-            <Button icon={Plus} onClick={handleAddComponent}>
-              Add Component
-            </Button>
-          </div>
-        }
-      />
-
-      <div style={styles.content}>
-        {/* Search and Filter Bar */}
-        <Card padding="16px">
-          <div style={styles.toolbar}>
-            <div style={styles.searchBox}>
-              <Search size={18} style={styles.searchIcon} />
-              <input
-                type="text"
-                placeholder="Search components..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                style={styles.searchInput}
-              />
-            </div>
-            <div style={styles.categoryFilters}>
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => setCategoryFilter(category)}
-                  style={{
-                    ...styles.categoryButton,
-                    background: categoryFilter === category ? colors.primary : 'transparent',
-                    color: categoryFilter === category ? 'white' : colors.neutral[600],
-                    borderColor: categoryFilter === category ? colors.primary : colors.neutral[200],
-                  }}
-                >
-                  {category === 'all' ? 'All Categories' : category}
-                </button>
-              ))}
-            </div>
-          </div>
-        </Card>
-
-        {/* Components Grid */}
-        <div style={styles.componentsGrid}>
-          {filteredComponents.map((component) => (
-            <ComponentCard 
-              key={component.id}
-              component={component}
-              onView={() => setSelectedComponent(component)}
-            />
-          ))}
+    <div className="cmp-card" onClick={() => onClick(component)}>
+      {/* Card Header */}
+      <div className="cmp-card-header">
+        <div className="cmp-card-badges">
+          <span className={`cmp-badge ${getStatusColor(component.status)}`}>
+            {component.status || 'Active'}
+          </span>
+          <span className="cmp-badge cmp-badge-category">
+            {getCategoryLabel(component.productCategory)}
+          </span>
         </div>
-
-        {filteredComponents.length === 0 && (
-          <Card>
-            <div style={styles.emptyState}>
-              <Package size={48} color={colors.neutral[300]} />
-              <h3>No Components Found</h3>
-              <p>No components match your search criteria.</p>
-            </div>
-          </Card>
-        )}
+        <span className="cmp-card-code">{component.partCode}</span>
       </div>
 
-      {/* Component Detail Modal */}
-      {selectedComponent && (
-        <ComponentDetailModal 
-          component={selectedComponent}
-          onClose={() => setSelectedComponent(null)}
-        />
+      {/* Card Title */}
+      <h3 className="cmp-card-title">{component.partName}</h3>
+
+      {/* Card Info */}
+      <div className="cmp-card-info">
+        <div className="cmp-card-info-row">
+          <span className="cmp-card-label">Vendor:</span>
+          <span className="cmp-card-value">{component.vendor || 'Not assigned'}</span>
+        </div>
+        <div className="cmp-card-info-row">
+          <span className="cmp-card-label">QC Plan:</span>
+          <span className="cmp-card-value">{component.qcPlanNo || component.samplingPlan || 'N/A'}</span>
+        </div>
+        <div className="cmp-card-info-row">
+          <span className="cmp-card-label">Checkpoints:</span>
+          <span className="cmp-card-value">{component.checkpoints || component.checkingParameters?.parameters?.length || 0}</span>
+        </div>
+      </div>
+
+      {/* Card Specifications */}
+      {component.specifications && Object.keys(component.specifications).length > 0 && (
+        <div className="cmp-card-specs">
+          {Object.entries(component.specifications).slice(0, 2).map(([key, value]) => (
+            <div key={key} className="cmp-card-spec-row">
+              <span className="cmp-card-spec-label">{key}:</span>
+              <span className="cmp-card-spec-value">{value}</span>
+            </div>
+          ))}
+        </div>
       )}
+
+      {/* Card Footer */}
+      <div className="cmp-card-footer">
+        {component.lastInspected ? (
+          <span className="cmp-card-inspected">
+            Last inspected: {formatDate(component.lastInspected)}
+          </span>
+        ) : (
+          <span className="cmp-card-not-inspected">Not yet inspected</span>
+        )}
+      </div>
     </div>
   );
 };
 
-// Component Card
-const ComponentCard = ({ component, onView }) => (
-  <Card hover onClick={onView} style={styles.componentCard}>
-    <div style={styles.cardHeader}>
-      <div style={styles.cardBadges}>
-        <Badge type="status" value={component.status} size="sm" />
-        <span style={styles.categoryTag}>{component.category}</span>
+// ============================================
+// PAGINATION COMPONENT
+// ============================================
+const Pagination = ({ currentPage, totalPages, totalItems, pageSize, onPageChange, onPageSizeChange }) => {
+  const startItem = (currentPage - 1) * pageSize + 1;
+  const endItem = Math.min(currentPage * pageSize, totalItems);
+
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxVisiblePages = 5;
+    
+    if (totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      if (currentPage <= 3) {
+        for (let i = 1; i <= 4; i++) pages.push(i);
+        pages.push('...');
+        pages.push(totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pages.push(1);
+        pages.push('...');
+        for (let i = totalPages - 3; i <= totalPages; i++) pages.push(i);
+      } else {
+        pages.push(1);
+        pages.push('...');
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) pages.push(i);
+        pages.push('...');
+        pages.push(totalPages);
+      }
+    }
+    return pages;
+  };
+
+  if (totalPages <= 1) return null;
+
+  return (
+    <div className="cmp-pagination">
+      <div className="cmp-pagination-info">
+        Showing {startItem}-{endItem} of {totalItems} components
       </div>
-      <span style={styles.componentId}>{component.id}</span>
-    </div>
-
-    <h3 style={styles.componentName}>{component.name}</h3>
-
-    <div style={styles.componentMeta}>
-      <div style={styles.metaItem}>
-        <strong>Vendor:</strong> {component.vendor}
-      </div>
-      <div style={styles.metaItem}>
-        <strong>QC Plan:</strong> {component.qcPlan}
-      </div>
-      <div style={styles.metaItem}>
-        <strong>Checkpoints:</strong> {component.checkpoints}
-      </div>
-    </div>
-
-    <div style={styles.specPreview}>
-      {Object.entries(component.specifications).slice(0, 2).map(([key, value]) => (
-        <div key={key} style={styles.specItem}>
-          <span style={styles.specKey}>{key}:</span>
-          <span style={styles.specValue}>{value}</span>
-        </div>
-      ))}
-    </div>
-
-    <div style={styles.cardFooter}>
-      {component.lastInspected ? (
-        <span style={styles.lastInspected}>
-          Last inspected: {formatDate(component.lastInspected)}
-        </span>
-      ) : (
-        <span style={styles.notInspected}>Not yet inspected</span>
-      )}
-    </div>
-  </Card>
-);
-
-// Component Detail Modal
-const ComponentDetailModal = ({ component, onClose }) => (
-  <div style={styles.modalOverlay} onClick={onClose}>
-    <div style={styles.modal} onClick={e => e.stopPropagation()}>
-      <div style={styles.modalHeader}>
-        <div>
-          <h2 style={styles.modalTitle}>{component.name}</h2>
-          <span style={styles.modalSubtitle}>{component.id} • {component.productLine}</span>
-        </div>
-        <Badge type="status" value={component.status} />
-      </div>
-
-      <div style={styles.modalBody}>
-        <div style={styles.infoSection}>
-          <h4 style={styles.sectionTitle}>Basic Information</h4>
-          <div style={styles.infoGrid}>
-            <InfoItem label="Category" value={component.category} />
-            <InfoItem label="Vendor" value={component.vendor} />
-            <InfoItem label="QC Plan" value={component.qcPlan} />
-            <InfoItem label="Checkpoints" value={component.checkpoints} />
-          </div>
-        </div>
-
-        <div style={styles.infoSection}>
-          <h4 style={styles.sectionTitle}>Specifications</h4>
-          <div style={styles.specList}>
-            {Object.entries(component.specifications).map(([key, value]) => (
-              <div key={key} style={styles.specRow}>
-                <span style={styles.specLabel}>{key}</span>
-                <span style={styles.specValue}>{value}</span>
-              </div>
-            ))}
-          </div>
-        </div>
+      
+      <div className="cmp-pagination-controls">
+        <button
+          className="cmp-pagination-btn"
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          <ChevronLeft size={18} />
+        </button>
+        
+        {getPageNumbers().map((page, index) => (
+          <button
+            key={index}
+            className={`cmp-pagination-btn ${page === currentPage ? 'cmp-pagination-active' : ''} ${page === '...' ? 'cmp-pagination-ellipsis' : ''}`}
+            onClick={() => page !== '...' && onPageChange(page)}
+            disabled={page === '...'}
+          >
+            {page}
+          </button>
+        ))}
+        
+        <button
+          className="cmp-pagination-btn"
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          <ChevronRight size={18} />
+        </button>
       </div>
 
-      <div style={styles.modalFooter}>
-        <Button variant="outline" icon={Copy} size="sm">
-          Duplicate
-        </Button>
-        <div style={styles.footerRight}>
-          <Button variant="ghost" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button icon={Edit2}>
-            Edit Component
-          </Button>
-        </div>
+      <div className="cmp-pagination-size">
+        <span>Show:</span>
+        <select 
+          value={pageSize} 
+          onChange={(e) => onPageSizeChange(Number(e.target.value))}
+          className="cmp-pagination-select"
+        >
+          <option value={12}>12</option>
+          <option value={24}>24</option>
+          <option value={48}>48</option>
+          <option value={96}>96</option>
+        </select>
       </div>
     </div>
-  </div>
-);
-
-// Info Item Component
-const InfoItem = ({ label, value }) => (
-  <div style={styles.infoItem}>
-    <span style={styles.infoLabel}>{label}</span>
-    <span style={styles.infoValue}>{value}</span>
-  </div>
-);
-
-// Utility functions
-const formatDate = (dateStr) => {
-  return new Date(dateStr).toLocaleDateString('en-IN', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  });
+  );
 };
 
-const styles = {
-  page: {
-    minHeight: '100vh',
-    background: colors.neutral[50],
-  },
+// ============================================
+// MAIN COMPONENT
+// ============================================
+const ComponentMasterPage = () => {
+  const navigate = useNavigate();
+  
+  // State
+  const [components, setComponents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(12);
+  const [totalItems, setTotalItems] = useState(0);
+  const [selectedComponent, setSelectedComponent] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
+  const [importLoading, setImportLoading] = useState(false);
+  const [exportLoading, setExportLoading] = useState(false);
 
-  content: {
-    padding: '24px 32px',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '24px',
-  },
+  // Fetch components
+  const loadComponents = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const params = {
+        page: currentPage,
+        limit: pageSize,
+        search: searchQuery || undefined,
+        category: selectedCategory !== 'all' ? selectedCategory : undefined,
+      };
+      
+      const response = await fetchComponents(params);
+      
+      setComponents(response.items || response.data || []);
+      setTotalItems(response.pagination?.total || response.total || response.items?.length || 0);
+    } catch (err) {
+      console.error('Error fetching components:', err);
+      setError(err.message || 'Failed to load components');
+    } finally {
+      setLoading(false);
+    }
+  }, [currentPage, pageSize, searchQuery, selectedCategory]);
 
-  headerActions: {
-    display: 'flex',
-    gap: '8px',
-  },
+  useEffect(() => {
+    loadComponents();
+  }, [loadComponents]);
 
-  toolbar: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '16px',
-  },
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedCategory]);
 
-  searchBox: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    padding: '10px 16px',
-    background: colors.neutral[50],
-    borderRadius: borderRadius.lg,
-    border: `1px solid ${colors.neutral[200]}`,
-  },
+  // Handlers
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+  };
 
-  searchIcon: {
-    color: colors.neutral[400],
-  },
+  const handleCategoryChange = (categoryId) => {
+    setSelectedCategory(categoryId);
+  };
 
-  searchInput: {
-    border: 'none',
-    background: 'transparent',
-    outline: 'none',
-    fontSize: '14px',
-    width: '100%',
-    color: colors.neutral[700],
-  },
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
-  categoryFilters: {
-    display: 'flex',
-    gap: '8px',
-    flexWrap: 'wrap',
-  },
+  const handlePageSizeChange = (size) => {
+    setPageSize(size);
+    setCurrentPage(1);
+  };
 
-  categoryButton: {
-    padding: '8px 16px',
-    fontSize: '13px',
-    fontWeight: 500,
-    borderRadius: borderRadius.md,
-    border: '1px solid',
-    cursor: 'pointer',
-    transition: 'all 0.2s',
-  },
+  const handleCardClick = (component) => {
+    setSelectedComponent(component);
+    setIsModalOpen(true);
+  };
 
-  componentsGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
-    gap: '20px',
-  },
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedComponent(null);
+  };
 
-  componentCard: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '12px',
-  },
+  const handleEditComponent = (component) => {
+    navigate(`/admin/component-master/edit/${component.id}`);
+  };
 
-  cardHeader: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-  },
+  const handleDuplicateComponent = async (component) => {
+    setActionLoading(true);
+    try {
+      const duplicated = await duplicateComponent(component.id);
+      setIsModalOpen(false);
+      setSelectedComponent(null);
+      // Refresh list
+      await loadComponents();
+      // Navigate to edit the duplicated component
+      navigate(`/admin/component-master/edit/${duplicated.id}`);
+    } catch (err) {
+      console.error('Error duplicating component:', err);
+      alert('Failed to duplicate component: ' + err.message);
+    } finally {
+      setActionLoading(false);
+    }
+  };
 
-  cardBadges: {
-    display: 'flex',
-    gap: '8px',
-    alignItems: 'center',
-  },
+  const handleDeleteComponent = async (component) => {
+    if (!window.confirm(`Are you sure you want to delete "${component.partName}"?`)) {
+      return;
+    }
+    
+    setActionLoading(true);
+    try {
+      await deleteComponent(component.id);
+      setIsModalOpen(false);
+      setSelectedComponent(null);
+      // Refresh list
+      await loadComponents();
+    } catch (err) {
+      console.error('Error deleting component:', err);
+      alert('Failed to delete component: ' + err.message);
+    } finally {
+      setActionLoading(false);
+    }
+  };
 
-  categoryTag: {
-    fontSize: '11px',
-    fontWeight: 500,
-    color: colors.neutral[500],
-    background: colors.neutral[100],
-    padding: '4px 8px',
-    borderRadius: borderRadius.sm,
-  },
+  const handleImport = async () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.xlsx,.xls,.csv';
+    input.onchange = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      
+      setImportLoading(true);
+      try {
+        await importComponents(file);
+        await loadComponents();
+        alert('Components imported successfully!');
+      } catch (err) {
+        console.error('Error importing components:', err);
+        alert('Failed to import components: ' + err.message);
+      } finally {
+        setImportLoading(false);
+      }
+    };
+    input.click();
+  };
 
-  componentId: {
-    fontSize: '12px',
-    fontWeight: 600,
-    color: colors.neutral[400],
-  },
+  const handleExport = async () => {
+    setExportLoading(true);
+    try {
+      const params = {
+        search: searchQuery || undefined,
+        category: selectedCategory !== 'all' ? selectedCategory : undefined,
+      };
+      await exportComponents(params);
+    } catch (err) {
+      console.error('Error exporting components:', err);
+      alert('Failed to export components: ' + err.message);
+    } finally {
+      setExportLoading(false);
+    }
+  };
 
-  componentName: {
-    fontSize: '16px',
-    fontWeight: 600,
-    color: colors.neutral[800],
-    margin: 0,
-  },
+  const handleAddComponent = () => {
+    navigate('/admin/component-master/new');
+  };
 
-  componentMeta: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '4px',
-    fontSize: '13px',
-    color: colors.neutral[600],
-  },
+  const totalPages = Math.ceil(totalItems / pageSize);
 
-  metaItem: {
-    display: 'flex',
-    gap: '8px',
-  },
+  return (
+    <div className="cmp-page">
+      {/* Page Header */}
+      <div className="cmp-header">
+        <div className="cmp-header-left">
+          <h1 className="cmp-title">Component Master</h1>
+          <p className="cmp-subtitle">Manage component specifications and QC requirements</p>
+        </div>
+        <div className="cmp-header-right">
+          <button 
+            className="cmp-btn cmp-btn-outline"
+            onClick={handleImport}
+            disabled={importLoading}
+          >
+            {importLoading ? <Loader2 size={18} className="cmp-spin" /> : <Upload size={18} />}
+            Import
+          </button>
+          <button 
+            className="cmp-btn cmp-btn-outline"
+            onClick={handleExport}
+            disabled={exportLoading}
+          >
+            {exportLoading ? <Loader2 size={18} className="cmp-spin" /> : <Download size={18} />}
+            Export
+          </button>
+          <button className="cmp-btn cmp-btn-primary" onClick={handleAddComponent}>
+            <Plus size={18} />
+            Add Component
+          </button>
+          <button className="cmp-btn cmp-btn-icon" title="Help">
+            <HelpCircle size={20} />
+          </button>
+          <button className="cmp-btn cmp-btn-icon" title="Notifications">
+            <Bell size={20} />
+          </button>
+        </div>
+      </div>
 
-  specPreview: {
-    padding: '12px',
-    background: colors.neutral[50],
-    borderRadius: borderRadius.md,
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '6px',
-  },
+      {/* Search and Filters */}
+      <div className="cmp-filters-container">
+        <div className="cmp-search-box">
+          <Search size={20} className="cmp-search-icon" />
+          <input
+            type="text"
+            placeholder="Search components..."
+            value={searchQuery}
+            onChange={handleSearch}
+            className="cmp-search-input"
+          />
+        </div>
 
-  specItem: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    fontSize: '12px',
-  },
+        <div className="cmp-category-tabs">
+          {CATEGORIES.map((category) => (
+            <button
+              key={category.id}
+              className={`cmp-category-tab ${selectedCategory === category.id ? 'cmp-category-active' : ''}`}
+              onClick={() => handleCategoryChange(category.id)}
+            >
+              {category.label}
+            </button>
+          ))}
+        </div>
+      </div>
 
-  specKey: {
-    color: colors.neutral[500],
-    textTransform: 'capitalize',
-  },
+      {/* Content */}
+      <div className="cmp-content">
+        {loading ? (
+          <div className="cmp-loading">
+            <Loader2 size={48} className="cmp-spin" />
+            <p>Loading components...</p>
+          </div>
+        ) : error ? (
+          <div className="cmp-error">
+            <AlertCircle size={48} />
+            <p>{error}</p>
+            <button className="cmp-btn cmp-btn-primary" onClick={loadComponents}>
+              <RefreshCw size={18} />
+              Retry
+            </button>
+          </div>
+        ) : components.length === 0 ? (
+          <div className="cmp-empty">
+            <Package size={64} />
+            <h3>No components found</h3>
+            <p>
+              {searchQuery || selectedCategory !== 'all'
+                ? 'Try adjusting your search or filters'
+                : 'Get started by adding your first component'}
+            </p>
+            {!searchQuery && selectedCategory === 'all' && (
+              <button className="cmp-btn cmp-btn-primary" onClick={handleAddComponent}>
+                <Plus size={18} />
+                Add Component
+              </button>
+            )}
+          </div>
+        ) : (
+          <>
+            {/* Cards Grid */}
+            <div className="cmp-cards-grid">
+              {components.map((component) => (
+                <ComponentCard
+                  key={component.id}
+                  component={component}
+                  onClick={handleCardClick}
+                />
+              ))}
+            </div>
 
-  specValue: {
-    color: colors.neutral[700],
-    fontWeight: 500,
-  },
+            {/* Pagination */}
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              totalItems={totalItems}
+              pageSize={pageSize}
+              onPageChange={handlePageChange}
+              onPageSizeChange={handlePageSizeChange}
+            />
+          </>
+        )}
+      </div>
 
-  cardFooter: {
-    paddingTop: '12px',
-    borderTop: `1px solid ${colors.neutral[100]}`,
-  },
-
-  lastInspected: {
-    fontSize: '12px',
-    color: colors.neutral[500],
-  },
-
-  notInspected: {
-    fontSize: '12px',
-    color: colors.warning,
-    fontStyle: 'italic',
-  },
-
-  emptyState: {
-    textAlign: 'center',
-    padding: '48px 24px',
-    color: colors.neutral[500],
-  },
-
-  // Modal styles
-  modalOverlay: {
-    position: 'fixed',
-    inset: 0,
-    background: 'rgba(0, 0, 0, 0.5)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 1000,
-    padding: '24px',
-  },
-
-  modal: {
-    background: 'white',
-    borderRadius: borderRadius.xl,
-    width: '100%',
-    maxWidth: '600px',
-    maxHeight: '90vh',
-    overflow: 'auto',
-    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
-  },
-
-  modalHeader: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    padding: '24px',
-    borderBottom: `1px solid ${colors.neutral[100]}`,
-  },
-
-  modalTitle: {
-    fontSize: '20px',
-    fontWeight: 600,
-    color: colors.neutral[800],
-    margin: 0,
-  },
-
-  modalSubtitle: {
-    fontSize: '13px',
-    color: colors.neutral[500],
-    marginTop: '4px',
-  },
-
-  modalBody: {
-    padding: '24px',
-  },
-
-  infoSection: {
-    marginBottom: '24px',
-  },
-
-  sectionTitle: {
-    fontSize: '14px',
-    fontWeight: 600,
-    color: colors.neutral[700],
-    marginBottom: '16px',
-  },
-
-  infoGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(2, 1fr)',
-    gap: '16px',
-  },
-
-  infoItem: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '4px',
-  },
-
-  infoLabel: {
-    fontSize: '12px',
-    color: colors.neutral[500],
-  },
-
-  infoValue: {
-    fontSize: '14px',
-    fontWeight: 500,
-    color: colors.neutral[800],
-  },
-
-  specList: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '12px',
-  },
-
-  specRow: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    padding: '8px 12px',
-    background: colors.neutral[50],
-    borderRadius: borderRadius.md,
-  },
-
-  specLabel: {
-    fontSize: '13px',
-    color: colors.neutral[600],
-    textTransform: 'capitalize',
-  },
-
-  modalFooter: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    padding: '16px 24px',
-    borderTop: `1px solid ${colors.neutral[100]}`,
-    background: colors.neutral[50],
-  },
-
-  footerRight: {
-    display: 'flex',
-    gap: '8px',
-  },
+      {/* Detail Modal */}
+      {isModalOpen && selectedComponent && (
+        <ComponentDetailModal
+          component={selectedComponent}
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          onEdit={handleEditComponent}
+          onDuplicate={handleDuplicateComponent}
+          onDelete={handleDeleteComponent}
+          loading={actionLoading}
+        />
+      )}
+    </div>
+  );
 };
 
 export default ComponentMasterPage;
