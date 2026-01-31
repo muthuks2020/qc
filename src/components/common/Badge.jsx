@@ -1,5 +1,6 @@
+// Badge Component
 import React from 'react';
-import { colors } from '../../constants/theme';
+import { colors, borderRadius } from '../../constants/theme';
 
 const statusStyles = {
   pending: {
@@ -18,6 +19,14 @@ const statusStyles = {
     background: colors.dangerLight,
     color: colors.danger,
   },
+  approved: {
+    background: colors.successLight,
+    color: colors.success,
+  },
+  draft: {
+    background: colors.neutral[100],
+    color: colors.neutral[600],
+  },
 };
 
 const priorityStyles = {
@@ -33,23 +42,29 @@ const priorityStyles = {
     background: colors.neutral[100],
     color: colors.neutral[600],
   },
+  critical: {
+    background: colors.danger,
+    color: 'white',
+  },
+};
+
+const sizeStyles = {
+  xs: { padding: '2px 6px', fontSize: '10px' },
+  sm: { padding: '2px 8px', fontSize: '11px' },
+  md: { padding: '4px 12px', fontSize: '12px' },
+  lg: { padding: '6px 14px', fontSize: '13px' },
 };
 
 export const Badge = ({
   children,
-  type = 'status', // 'status' | 'priority'
+  type = 'status',
   value,
   size = 'md',
+  dot = false,
   style = {},
 }) => {
-  const styles = type === 'priority' ? priorityStyles : statusStyles;
-  const badgeStyle = styles[value] || styles.pending;
-
-  const sizeStyles = {
-    sm: { padding: '2px 8px', fontSize: '11px' },
-    md: { padding: '4px 12px', fontSize: '12px' },
-    lg: { padding: '6px 14px', fontSize: '13px' },
-  };
+  const styleMap = type === 'priority' ? priorityStyles : statusStyles;
+  const badgeStyle = styleMap[value] || styleMap.pending;
 
   const formatLabel = (val) => {
     return val?.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) || children;
@@ -60,13 +75,25 @@ export const Badge = ({
       style={{
         display: 'inline-flex',
         alignItems: 'center',
-        borderRadius: '20px',
+        gap: '6px',
+        borderRadius: borderRadius.full,
         fontWeight: 500,
+        whiteSpace: 'nowrap',
         ...badgeStyle,
         ...sizeStyles[size],
         ...style,
       }}
     >
+      {dot && (
+        <span
+          style={{
+            width: '6px',
+            height: '6px',
+            borderRadius: '50%',
+            background: 'currentColor',
+          }}
+        />
+      )}
       {formatLabel(value)}
     </span>
   );

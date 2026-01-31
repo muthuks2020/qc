@@ -1,9 +1,10 @@
+// Common Button Component
 import React from 'react';
-import { colors, borderRadius, shadows } from '../../constants/theme';
+import { colors, borderRadius, shadows, transitions } from '../../constants/theme';
 
 const variants = {
   primary: {
-    background: colors.primary,
+    background: `linear-gradient(135deg, ${colors.brand.primary} 0%, ${colors.brand.secondary} 100%)`,
     color: 'white',
     border: 'none',
     boxShadow: shadows.primary,
@@ -23,22 +24,34 @@ const variants = {
     color: 'white',
     border: 'none',
   },
+  warning: {
+    background: colors.warning,
+    color: 'white',
+    border: 'none',
+  },
   outline: {
     background: 'transparent',
     color: colors.primary,
-    border: `1px solid ${colors.primary}`,
+    border: `1.5px solid ${colors.primary}`,
   },
   ghost: {
     background: 'transparent',
     color: colors.neutral[600],
     border: 'none',
   },
+  white: {
+    background: 'white',
+    color: colors.neutral[700],
+    border: `1px solid ${colors.neutral[200]}`,
+  },
 };
 
 const sizes = {
-  sm: { padding: '8px 12px', fontSize: '13px' },
-  md: { padding: '10px 20px', fontSize: '14px' },
-  lg: { padding: '12px 24px', fontSize: '15px' },
+  xs: { padding: '6px 10px', fontSize: '12px', gap: '6px' },
+  sm: { padding: '8px 14px', fontSize: '13px', gap: '6px' },
+  md: { padding: '10px 20px', fontSize: '14px', gap: '8px' },
+  lg: { padding: '12px 24px', fontSize: '15px', gap: '10px' },
+  xl: { padding: '14px 28px', fontSize: '16px', gap: '10px' },
 };
 
 export const Button = ({
@@ -49,8 +62,10 @@ export const Button = ({
   iconPosition = 'left',
   disabled = false,
   fullWidth = false,
+  loading = false,
   onClick,
   style = {},
+  type = 'button',
   ...props
 }) => {
   const variantStyles = variants[variant] || variants.primary;
@@ -58,30 +73,51 @@ export const Button = ({
 
   return (
     <button
+      type={type}
       onClick={onClick}
-      disabled={disabled}
+      disabled={disabled || loading}
       style={{
-        display: 'flex',
+        display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: '8px',
+        gap: sizeStyles.gap,
         borderRadius: borderRadius.md,
-        cursor: disabled ? 'not-allowed' : 'pointer',
+        cursor: disabled || loading ? 'not-allowed' : 'pointer',
         fontWeight: 500,
-        transition: 'all 0.2s',
+        transition: transitions.normal,
         opacity: disabled ? 0.6 : 1,
         width: fullWidth ? '100%' : 'auto',
+        fontFamily: 'inherit',
         ...variantStyles,
         ...sizeStyles,
         ...style,
       }}
       {...props}
     >
-      {Icon && iconPosition === 'left' && <Icon size={18} />}
-      {children}
-      {Icon && iconPosition === 'right' && <Icon size={18} />}
+      {loading ? (
+        <LoadingSpinner size={16} />
+      ) : (
+        <>
+          {Icon && iconPosition === 'left' && <Icon size={sizeStyles.fontSize === '12px' ? 14 : 18} />}
+          {children}
+          {Icon && iconPosition === 'right' && <Icon size={sizeStyles.fontSize === '12px' ? 14 : 18} />}
+        </>
+      )}
     </button>
   );
 };
+
+const LoadingSpinner = ({ size = 16 }) => (
+  <div
+    style={{
+      width: size,
+      height: size,
+      border: '2px solid rgba(255,255,255,0.3)',
+      borderTopColor: 'currentColor',
+      borderRadius: '50%',
+      animation: 'spin 0.8s linear infinite',
+    }}
+  />
+);
 
 export default Button;

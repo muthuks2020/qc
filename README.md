@@ -1,282 +1,236 @@
-# Appasamy QC - Updated Inspection Module
+# Appasamy QC Application
 
-## 🆕 What's New
+Quality Control Management System for Appasamy Associates B-SCAN Products
 
-This update enhances the inspection matrix with:
+## 🚀 Features
 
-1. **Measurement Input Fields** - Numeric input fields for entering measured values (in addition to Yes/No toggles)
-2. **QC File Links** - Clickable links below checkpoint names to view QC parameters
-3. **Auto-Status Determination** - Automatically sets OK/NG based on measured values and limits
-4. **Configurable API Approach** - Easy toggle between mock and real API
-5. **Modular Code Structure** - Clean separation of concerns
+### Role-Based Access Control
+- **Admin** - System configuration, sampling masters, component masters, user management
+- **Maker (QC Person)** - Perform quality inspections, enter QC data
+- **Checker (Validator)** - Review and validate QC entries, approve/reject inspections
 
----
+### Key Capabilities
+- Professional login page with Appasamy branding
+- Office 365 SSO integration ready (easily configurable)
+- Real-time inspection tracking
+- Maker-Checker-Approver workflow
+- Responsive design for all devices
+- Complete audit trail
 
-## 📁 Updated Files
+## 📁 Project Structure
 
 ```
-src/
-├── api/
-│   ├── config.js           # Enhanced with QC file endpoints
-│   ├── mockData.js         # Enhanced checkpoint data with input types
-│   ├── qcService.js        # Updated with configurable API toggle
-│   ├── qcFileService.js    # NEW: QC file API service
-│   └── index.js            # Updated exports
-│
-├── components/
-│   └── inspection/
-│       ├── InspectionMatrix.jsx  # Enhanced with input fields & QC links
-│       └── index.js
-│
-└── pages/
-    ├── InspectionPage.jsx  # Enhanced with measurement handling & QC modal
-    └── index.js
+appasamy-qc-app/
+├── src/
+│   ├── components/
+│   │   └── common/           # Reusable components
+│   │       ├── Badge.jsx
+│   │       ├── Button.jsx
+│   │       ├── Card.jsx
+│   │       ├── Header.jsx
+│   │       ├── MainLayout.jsx
+│   │       ├── Sidebar.jsx
+│   │       └── index.js
+│   ├── constants/
+│   │   └── theme.js          # Brand colors & design tokens
+│   ├── contexts/
+│   │   └── AuthContext.jsx   # Authentication state management
+│   ├── pages/
+│   │   ├── auth/
+│   │   │   └── LoginPage.jsx
+│   │   ├── admin/
+│   │   │   ├── AdminDashboard.jsx
+│   │   │   ├── SamplingMasterPage.jsx
+│   │   │   └── ComponentMasterPage.jsx
+│   │   ├── maker/
+│   │   │   └── MakerDashboard.jsx
+│   │   └── checker/
+│   │       └── CheckerDashboard.jsx
+│   ├── routes/
+│   │   ├── ProtectedRoute.jsx
+│   │   └── index.js
+│   ├── App.jsx
+│   ├── main.jsx
+│   └── index.css
+├── index.html
+├── package.json
+├── vite.config.js
+└── README.md
 ```
 
----
+## 🔐 Demo Credentials
 
-## 🔧 Key Features
+| Role | Username | Password |
+|------|----------|----------|
+| Admin | admin | admin123 |
+| Maker (QC Person) | qcmaker | maker123 |
+| Checker (Validator) | qcchecker | checker123 |
 
-### 1. Measurement Input Fields
+## 🎨 Brand Colors
 
-Each checkpoint can now have a numeric input field:
+Based on [Appasamy Website](https://www.appasamy.com/):
 
-```jsx
-// Input types supported:
-inputType: 'measurement'  // Numeric input only
-inputType: 'yesno'        // Yes/No toggle only  
-inputType: 'both'         // Both measurement and Yes/No
-```
+- **Deep Navy Blue**: #003366 (Primary)
+- **Medium Blue**: #004C8C
+- **Bright Blue**: #0066CC
+- **Light Blue**: #00A0E3 (Accent)
 
-**Features:**
-- Color-coded borders (green = within limits, red = out of limits)
-- Auto-focus and keyboard support (Enter to confirm)
-- Placeholder shows unit (mm, Nos, etc.)
+### Role-Specific Colors
+- **Admin**: Purple (#7C3AED)
+- **Maker**: Navy Blue (#003366)
+- **Checker**: Green (#059669)
 
-### 2. QC File Links
-
-Below each checkpoint name, a "QC Parameters" link appears (if a QC file is linked):
-
-```jsx
-// Checkpoint with QC file
-{
-  id: 1,
-  name: 'Height',
-  qcFileId: 'QC-FILE-001',
-  qcFileUrl: '/files/qc-parameters/height-measurement.pdf',
-  ...
-}
-```
-
-Clicking the link opens a modal with:
-- QC file description
-- Parameters table (nominal, limits, etc.)
-- "View Full Document" button
-
-### 3. Auto-Status Determination
-
-When entering a measured value, the status (OK/NG) is automatically set:
-
-```javascript
-// If measured value is within limits → OK
-// If measured value is outside limits → NG
-
-// Example: Height checkpoint
-upperLimit: 94.5  // mm
-lowerLimit: 93.5  // mm
-
-// User enters 94.2 → Auto-set to OK ✓
-// User enters 95.0 → Auto-set to NG ✗
-```
-
----
-
-## 🔌 API Configuration
-
-### Toggle Between Mock and Real API
-
-**In `src/api/qcService.js`:**
-```javascript
-export const QC_API_CONFIG = {
-  useMockData: true,  // Set to false when API is ready
-  logApiCalls: true,  // Enable for debugging
-};
-```
-
-**In `src/api/qcFileService.js`:**
-```javascript
-export const QC_FILE_API_CONFIG = {
-  useMockData: true,  // Set to false when API is ready
-  logApiCalls: true,
-};
-```
-
-### New API Endpoints
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/qc/files/:fileId` | GET | Get QC file details |
-| `/qc/checkpoints/:checkpointId/file` | GET | Get QC file for checkpoint |
-| `/qc/checkpoints/:checkpointId/parameters` | GET | Get checkpoint parameters |
-| `/qc/quality-plans/:planNo` | GET | Get quality plan document |
-
----
-
-## 📋 Data Structure Changes
-
-### Enhanced Checkpoint Format
-
-```javascript
-// Old format
-{
-  id: 1,
-  name: 'Height',
-  instrument: 'Vernier',
-  spec: '94mm',
-  tolerance: '±0.5mm',
-  samples: Array(10).fill(null),  // null | 'OK' | 'NG'
-}
-
-// New format
-{
-  id: 1,
-  name: 'Height',
-  instrument: 'Vernier',
-  spec: '94mm',
-  tolerance: '±0.5mm',
-  
-  // NEW: Input configuration
-  inputType: 'measurement',       // 'measurement' | 'yesno' | 'both'
-  unit: 'mm',                     // Display unit
-  nominalValue: 94,               // Target value
-  upperLimit: 94.5,               // Max acceptable
-  lowerLimit: 93.5,               // Min acceptable
-  
-  // NEW: QC file reference
-  qcFileId: 'QC-FILE-001',
-  qcFileUrl: '/files/qc-parameters/height-measurement.pdf',
-  
-  // NEW: Enhanced samples format
-  samples: Array(10).fill(null).map(() => ({
-    status: null,           // 'OK' | 'NG' | null
-    measuredValue: null,    // number | null
-  })),
-}
-```
-
-### Backward Compatibility
-
-The code supports both old and new data formats:
-- Old format: `samples: ['OK', 'NG', null, ...]`
-- New format: `samples: [{ status: 'OK', measuredValue: 94.2 }, ...]`
-
----
-
-## 🎯 Implementation Guide
-
-### Step 1: Replace Files
-
-Copy the updated files to your project:
+## 🛠️ Installation
 
 ```bash
-# API files
-cp src/api/*.js your-project/src/api/
+# Install dependencies
+npm install
 
-# Component files  
-cp src/components/inspection/InspectionMatrix.jsx your-project/src/components/inspection/
+# Start development server
+npm run dev
 
-# Page files
-cp src/pages/InspectionPage.jsx your-project/src/pages/
+# Build for production
+npm run build
 ```
 
-### Step 2: Update Imports
+## 🔧 Office 365 SSO Configuration
 
-Ensure your API index exports the new service:
+The application is prepared for Office 365 SSO integration. To enable:
+
+### 1. Azure AD Setup
+1. Go to Azure Portal → Azure Active Directory
+2. App Registrations → New Registration
+3. Configure:
+   - Name: "Appasamy QC Application"
+   - Redirect URI: `https://your-domain.com/auth/callback`
+4. Note down the **Client ID** and **Tenant ID**
+
+### 2. Update Configuration
+
+In `src/contexts/AuthContext.jsx`, update the SSO config:
 
 ```javascript
-// src/api/index.js
-export * from './config';
-export * from './qcService';
-export * from './qcFileService';  // NEW
-export * from './mockData';
+sso: {
+  enabled: true,  // Change to true
+  provider: 'microsoft',
+  tenantId: 'YOUR_AZURE_TENANT_ID',
+  clientId: 'YOUR_AZURE_CLIENT_ID',
+  redirectUri: 'https://your-domain.com/auth/callback',
+  scopes: ['openid', 'profile', 'email', 'User.Read'],
+}
 ```
 
-### Step 3: Connect Real API
+### 3. Backend Integration
+Create a backend endpoint to:
+- Exchange authorization code for tokens
+- Validate tokens and extract user info
+- Map Azure AD user to app roles (Admin/Maker/Checker)
+- Return session token
 
-When your API is ready:
+## 📱 Routes
 
-1. Set `useMockData: false` in both config objects
-2. Implement the actual API endpoints
-3. Update the endpoint URLs in `config.js`
+### Public Routes
+- `/login` - Login page
 
----
+### Admin Routes (`/admin/*`)
+- `/admin` - Admin Dashboard
+- `/admin/sampling-master` - Sampling Plan Configuration
+- `/admin/component-master` - Component Specifications
+- `/admin/users` - User Management
+- `/admin/reports` - System Reports
+- `/admin/settings` - System Settings
 
-## 🔄 API Integration Checklist
+### Maker Routes (`/maker/*`)
+- `/maker` - QC Workstation Dashboard
+- `/maker/inspection` - Inspection Entry
+- `/maker/inspection/:jobId` - Job Inspection
+- `/maker/batches` - Batch Management
+- `/maker/history` - Inspection History
+- `/maker/reports` - QC Reports
 
-When connecting to real API:
+### Checker Routes (`/checker/*`)
+- `/checker` - Validation Dashboard
+- `/checker/pending` - Pending Reviews
+- `/checker/validated` - Validated Jobs
+- `/checker/rejected` - Rejected Jobs
+- `/checker/reports` - Validation Reports
 
-- [ ] Set `QC_API_CONFIG.useMockData = false`
-- [ ] Set `QC_FILE_API_CONFIG.useMockData = false`
-- [ ] Update `API_CONFIG.BASE_URL` in config.js
-- [ ] Update `API_CONFIG.QC_FILES_URL` in config.js
-- [ ] Implement `/qc/files/:fileId` endpoint
-- [ ] Implement `/qc/checkpoints/:checkpointId/parameters` endpoint
-- [ ] Update checkpoint data to include `inputType`, limits, and qcFileId
-- [ ] Test measurement input auto-validation
-- [ ] Test QC file modal loading
+## 🧩 Components
 
----
+### Common Components
+- **Button** - Multiple variants (primary, secondary, outline, ghost, danger)
+- **Card** - Content container with hover effects
+- **Badge** - Status and priority indicators
+- **Header** - Page header with title, search, and actions
+- **Sidebar** - Role-aware navigation sidebar
+- **MainLayout** - Authenticated page wrapper
 
-## 📱 UI Preview
+### Usage Example
 
-### Inspection Matrix with Measurement Inputs
+```jsx
+import { Button, Card, Badge, Header } from './components/common';
 
-```
-┌────────────────────────────────────────────────────────────────┐
-│  Inspection Matrix                    ✓ 5 Passed  ✗ 2 Failed  │
-├────────────────┬──────────┬──────┬──────┬──────┬──────┬───────┤
-│  Checkpoint    │  Spec    │  S1  │  S2  │  S3  │  S4  │  ...  │
-├────────────────┼──────────┼──────┼──────┼──────┼──────┼───────┤
-│  Height        │  94mm    │[94.2]│[93.8]│[____]│[____]│       │
-│  Vernier       │  ±0.5mm  │  ✓   │  ✓   │  –   │  –   │       │
-│  📄 QC Params  │          │      │      │      │      │       │
-├────────────────┼──────────┼──────┼──────┼──────┼──────┼───────┤
-│  Thickness-1   │  29mm    │[29.1]│[28.5]│[____]│[____]│       │
-│  Vernier       │  ±0.3mm  │  ✓   │  ✗   │  –   │  –   │       │
-│  📄 QC Params  │          │      │      │      │      │       │
-└────────────────┴──────────┴──────┴──────┴──────┴──────┴───────┘
-```
+// Button variants
+<Button variant="primary">Primary</Button>
+<Button variant="outline" icon={Plus}>Add New</Button>
 
-### QC Parameters Modal
+// Badge types
+<Badge type="status" value="pending" />
+<Badge type="priority" value="high" />
 
-```
-┌─────────────────────────────────────────┐
-│  📄 QC Parameters              [×]      │
-│  Height                                 │
-├─────────────────────────────────────────┤
-│                                         │
-│  Height Measurement Parameters          │
-│  QC parameters for height measurement   │
-│  Revision: 1.2  Updated: 2025-09-15     │
-│                                         │
-│  Parameters                             │
-│  ───────────────────────────────────    │
-│  Nominal Value      94mm                │
-│  Upper Limit        94.5mm              │
-│  Lower Limit        93.5mm              │
-│  Measurement Points 3                   │
-│  Instrument         Vernier Caliper     │
-│  Accuracy           ±0.02mm             │
-│                                         │
-│  [    View Full Document    ]           │
-│                                         │
-└─────────────────────────────────────────┘
+// Cards
+<Card hover onClick={handleClick}>
+  <h3>Card Title</h3>
+  <p>Card content</p>
+</Card>
 ```
 
----
+## 🔒 Protected Routes
+
+Routes are protected based on user roles:
+
+```jsx
+import { AdminRoute, MakerRoute, CheckerRoute } from './routes';
+
+<AdminRoute>
+  <AdminDashboard />
+</AdminRoute>
+
+<MakerRoute>
+  <MakerDashboard />
+</MakerRoute>
+
+<CheckerRoute>
+  <CheckerDashboard />
+</CheckerRoute>
+```
+
+## 📦 Dependencies
+
+- **React 18** - UI Framework
+- **React Router v6** - Routing
+- **Lucide React** - Icons
+- **Vite** - Build tool
+
+## 🚀 Deployment
+
+1. Build the application:
+   ```bash
+   npm run build
+   ```
+
+2. Deploy the `dist` folder to your hosting service
+
+3. Configure environment variables for production
 
 ## 📞 Support
 
-For questions or issues, contact the development team.
+For questions or issues, contact:
+- Shellkode Development Team
+- Appasamy Associates IT Department
 
-© 2025 Appasamy Associates. All rights reserved.
+---
+
+**Empowering Vision Since 1978**
+
+© 2026 Appasamy Associates. All rights reserved.
