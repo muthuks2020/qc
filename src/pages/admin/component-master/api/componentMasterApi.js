@@ -2,16 +2,23 @@
  * Component Master API Service
  * Handles all API calls for Component Master CRUD operations
  * 
- * Configuration:
- * - Set USE_MOCK_DATA to false when backend API is ready
- * - Update API_BASE_URL with your backend endpoint
+ * CONFIGURATION:
+ * All API settings are managed in /src/config/apiConfig.js
+ * - Change USE_MOCK_DATA to false when backend is ready
+ * - Update API_BASE_URL in apiConfig.js for your backend server
  */
 
-// ============================================
-// CONFIGURATION - Toggle between Mock and Real API
-// ============================================
-const USE_MOCK_DATA = true;  // Set to false when backend is ready
-const API_BASE_URL = '/api/v1/component-master';
+import { 
+  USE_MOCK_DATA, 
+  COMPONENT_MASTER_ENDPOINTS as ENDPOINTS,
+  getAuthHeaders,
+  getMultipartHeaders,
+  buildQueryString,
+} from '../../../../config/apiConfig';
+
+// For backwards compatibility - expose config
+export { USE_MOCK_DATA };
+export const API_BASE_URL = ENDPOINTS.components.replace('/components', '');
 
 // ============================================
 // MOCK DATA
@@ -169,6 +176,7 @@ const generateId = () => {
 
 /**
  * Get all product categories
+ * @returns {Promise<Array>} List of categories
  */
 export const getProductCategories = async () => {
   if (USE_MOCK_DATA) {
@@ -182,13 +190,17 @@ export const getProductCategories = async () => {
     ];
   }
   
-  const response = await fetch(`${API_BASE_URL}/categories`);
+  const response = await fetch(ENDPOINTS.categories, {
+    headers: getAuthHeaders(),
+  });
   if (!response.ok) throw new Error('Failed to fetch categories');
   return response.json();
 };
 
 /**
  * Get product groups by category
+ * @param {string} category - Category ID
+ * @returns {Promise<Array>} List of product groups
  */
 export const getProductGroups = async (category) => {
   if (USE_MOCK_DATA) {
@@ -196,13 +208,16 @@ export const getProductGroups = async (category) => {
     return mockProductGroups[category] || [];
   }
   
-  const response = await fetch(`${API_BASE_URL}/product-groups?category=${category}`);
+  const response = await fetch(`${ENDPOINTS.productGroups}?category=${category}`, {
+    headers: getAuthHeaders(),
+  });
   if (!response.ok) throw new Error('Failed to fetch product groups');
   return response.json();
 };
 
 /**
  * Get all sampling plans
+ * @returns {Promise<Array>} List of sampling plans
  */
 export const getSamplingPlans = async () => {
   if (USE_MOCK_DATA) {
@@ -210,13 +225,16 @@ export const getSamplingPlans = async () => {
     return mockSamplingPlans;
   }
   
-  const response = await fetch(`${API_BASE_URL}/sampling-plans`);
+  const response = await fetch(ENDPOINTS.samplingPlans, {
+    headers: getAuthHeaders(),
+  });
   if (!response.ok) throw new Error('Failed to fetch sampling plans');
   return response.json();
 };
 
 /**
  * Get all QC plans
+ * @returns {Promise<Array>} List of QC plans
  */
 export const getQCPlans = async () => {
   if (USE_MOCK_DATA) {
@@ -224,13 +242,17 @@ export const getQCPlans = async () => {
     return mockQCPlans;
   }
   
-  const response = await fetch(`${API_BASE_URL}/qc-plans`);
+  const response = await fetch(ENDPOINTS.qcPlans, {
+    headers: getAuthHeaders(),
+  });
   if (!response.ok) throw new Error('Failed to fetch QC plans');
   return response.json();
 };
 
 /**
  * Get all components with optional filters
+ * @param {Object} filters - Filter options (category, status, search)
+ * @returns {Promise<Object>} Components list with pagination
  */
 export const getComponents = async (filters = {}) => {
   if (USE_MOCK_DATA) {
@@ -259,14 +281,18 @@ export const getComponents = async (filters = {}) => {
     };
   }
   
-  const params = new URLSearchParams(filters);
-  const response = await fetch(`${API_BASE_URL}/components?${params}`);
+  const queryString = buildQueryString(filters);
+  const response = await fetch(`${ENDPOINTS.components}${queryString}`, {
+    headers: getAuthHeaders(),
+  });
   if (!response.ok) throw new Error('Failed to fetch components');
   return response.json();
 };
 
 /**
  * Get single component by ID
+ * @param {string} id - Component ID
+ * @returns {Promise<Object>} Component details
  */
 export const getComponentById = async (id) => {
   if (USE_MOCK_DATA) {
@@ -276,13 +302,17 @@ export const getComponentById = async (id) => {
     return component;
   }
   
-  const response = await fetch(`${API_BASE_URL}/components/${id}`);
+  const response = await fetch(ENDPOINTS.componentById(id), {
+    headers: getAuthHeaders(),
+  });
   if (!response.ok) throw new Error('Failed to fetch component');
   return response.json();
 };
 
 /**
  * Create new component
+ * @param {Object} data - Component data
+ * @returns {Promise<Object>} Created component
  */
 export const createComponent = async (data) => {
   if (USE_MOCK_DATA) {
@@ -298,9 +328,9 @@ export const createComponent = async (data) => {
     return newComponent;
   }
   
-  const response = await fetch(`${API_BASE_URL}/components`, {
+  const response = await fetch(ENDPOINTS.components, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: getAuthHeaders(),
     body: JSON.stringify(data),
   });
   if (!response.ok) throw new Error('Failed to create component');
@@ -309,6 +339,9 @@ export const createComponent = async (data) => {
 
 /**
  * Update existing component
+ * @param {string} id - Component ID
+ * @param {Object} data - Updated component data
+ * @returns {Promise<Object>} Updated component
  */
 export const updateComponent = async (id, data) => {
   if (USE_MOCK_DATA) {
@@ -324,9 +357,9 @@ export const updateComponent = async (id, data) => {
     return componentsData[index];
   }
   
-  const response = await fetch(`${API_BASE_URL}/components/${id}`, {
+  const response = await fetch(ENDPOINTS.componentById(id), {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
+    headers: getAuthHeaders(),
     body: JSON.stringify(data),
   });
   if (!response.ok) throw new Error('Failed to update component');
@@ -335,6 +368,8 @@ export const updateComponent = async (id, data) => {
 
 /**
  * Delete component
+ * @param {string} id - Component ID
+ * @returns {Promise<Object>} Success response
  */
 export const deleteComponent = async (id) => {
   if (USE_MOCK_DATA) {
@@ -345,8 +380,9 @@ export const deleteComponent = async (id) => {
     return { success: true };
   }
   
-  const response = await fetch(`${API_BASE_URL}/components/${id}`, {
+  const response = await fetch(ENDPOINTS.componentById(id), {
     method: 'DELETE',
+    headers: getAuthHeaders(),
   });
   if (!response.ok) throw new Error('Failed to delete component');
   return response.json();
@@ -354,11 +390,14 @@ export const deleteComponent = async (id) => {
 
 /**
  * Upload file attachment
+ * @param {File} file - File to upload
+ * @param {string} componentId - Component ID (optional for new components)
+ * @param {string} fieldName - Field name (drawingAttachment, testCertFile, etc.)
+ * @returns {Promise<Object>} Upload result with file URL
  */
 export const uploadAttachment = async (file, componentId, fieldName) => {
   if (USE_MOCK_DATA) {
     await delay(800);
-    // Simulate file upload
     return {
       success: true,
       fileName: file.name,
@@ -370,11 +409,12 @@ export const uploadAttachment = async (file, componentId, fieldName) => {
   
   const formData = new FormData();
   formData.append('file', file);
-  formData.append('componentId', componentId);
+  if (componentId) formData.append('componentId', componentId);
   formData.append('fieldName', fieldName);
   
-  const response = await fetch(`${API_BASE_URL}/attachments`, {
+  const response = await fetch(ENDPOINTS.upload, {
     method: 'POST',
+    headers: getMultipartHeaders(),
     body: formData,
   });
   if (!response.ok) throw new Error('Failed to upload file');
@@ -383,6 +423,9 @@ export const uploadAttachment = async (file, componentId, fieldName) => {
 
 /**
  * Validate part code uniqueness
+ * @param {string} partCode - Part code to validate
+ * @param {string} excludeId - Component ID to exclude (for updates)
+ * @returns {Promise<Object>} Validation result { isUnique: boolean }
  */
 export const validatePartCode = async (partCode, excludeId = null) => {
   if (USE_MOCK_DATA) {
@@ -393,7 +436,10 @@ export const validatePartCode = async (partCode, excludeId = null) => {
     return { isUnique: !exists };
   }
   
-  const response = await fetch(`${API_BASE_URL}/validate-part-code?code=${partCode}&exclude=${excludeId || ''}`);
+  const queryString = buildQueryString({ code: partCode, exclude: excludeId });
+  const response = await fetch(`${ENDPOINTS.validatePartCode}${queryString}`, {
+    headers: getAuthHeaders(),
+  });
   if (!response.ok) throw new Error('Failed to validate part code');
   return response.json();
 };
@@ -461,20 +507,18 @@ export const fetchComponents = async (params = {}) => {
   }
   
   // Real API call
-  const queryParams = new URLSearchParams();
-  queryParams.append('page', page);
-  queryParams.append('limit', limit);
-  if (search) queryParams.append('search', search);
-  if (category) queryParams.append('category', category);
-  if (status) queryParams.append('status', status);
-  
-  const response = await fetch(`${API_BASE_URL}/components?${queryParams}`);
+  const queryString = buildQueryString({ page, limit, search, category, status });
+  const response = await fetch(`${ENDPOINTS.components}${queryString}`, {
+    headers: getAuthHeaders(),
+  });
   if (!response.ok) throw new Error('Failed to fetch components');
   return response.json();
 };
 
 /**
  * Duplicate a component
+ * @param {string} id - Component ID to duplicate
+ * @returns {Promise<Object>} Duplicated component
  */
 export const duplicateComponent = async (id) => {
   if (USE_MOCK_DATA) {
@@ -499,8 +543,9 @@ export const duplicateComponent = async (id) => {
     return duplicate;
   }
   
-  const response = await fetch(`${API_BASE_URL}/components/${id}/duplicate`, {
+  const response = await fetch(ENDPOINTS.duplicateComponent(id), {
     method: 'POST',
+    headers: getAuthHeaders(),
   });
   if (!response.ok) throw new Error('Failed to duplicate component');
   return response.json();
@@ -508,6 +553,8 @@ export const duplicateComponent = async (id) => {
 
 /**
  * Export components to Excel/CSV
+ * @param {Object} params - Export filters (category, search)
+ * @returns {Promise<Object>} Success response
  */
 export const exportComponents = async (params = {}) => {
   if (USE_MOCK_DATA) {
@@ -554,8 +601,10 @@ export const exportComponents = async (params = {}) => {
   }
   
   // Real API call - expect file download
-  const queryParams = new URLSearchParams(params);
-  const response = await fetch(`${API_BASE_URL}/components/export?${queryParams}`);
+  const queryString = buildQueryString(params);
+  const response = await fetch(`${ENDPOINTS.export}${queryString}`, {
+    headers: getAuthHeaders(),
+  });
   if (!response.ok) throw new Error('Failed to export components');
   
   const blob = await response.blob();
@@ -569,6 +618,8 @@ export const exportComponents = async (params = {}) => {
 
 /**
  * Import components from Excel/CSV
+ * @param {File} file - Excel/CSV file to import
+ * @returns {Promise<Object>} Import result with count
  */
 export const importComponents = async (file) => {
   if (USE_MOCK_DATA) {
@@ -602,8 +653,9 @@ export const importComponents = async (file) => {
   const formData = new FormData();
   formData.append('file', file);
   
-  const response = await fetch(`${API_BASE_URL}/components/import`, {
+  const response = await fetch(ENDPOINTS.import, {
     method: 'POST',
+    headers: getMultipartHeaders(),
     body: formData,
   });
   if (!response.ok) throw new Error('Failed to import components');
@@ -647,7 +699,10 @@ const getMockInspectionDate = () => {
   return date.toISOString();
 };
 
-// Export configuration for external access
+// ============================================
+// EXPORT CONFIGURATION
+// ============================================
+
 export const API_CONFIG = {
   USE_MOCK_DATA,
   API_BASE_URL,
