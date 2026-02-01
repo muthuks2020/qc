@@ -8,9 +8,17 @@ import ProtectedRoute, { AdminRoute, MakerRoute, CheckerRoute } from './routes/P
 import { MainLayout } from './components/common';
 import LoginPage from './pages/auth/LoginPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
-import SamplingMasterPage from './pages/admin/SamplingMasterPage';
+
+// Sampling Master Pages
+import SamplingMasterPage from './pages/admin/sampling-master/SamplingMasterPage';
+import SamplingPlanMasterPage from './pages/admin/sampling-master/SamplingPlanMasterPage';
+import QualityPlanConfigPage from './pages/admin/sampling-master/QualityPlanConfigPage';
+
+// Component Master Pages
 import ComponentMasterPage from './pages/admin/ComponentMasterPage';
 import ComponentMasterEntryPage from './pages/admin/component-master/ComponentMasterEntryPage';
+
+// Other Dashboard Pages
 import MakerDashboard from './pages/maker/MakerDashboard';
 import CheckerDashboard from './pages/checker/CheckerDashboard';
 import { colors } from './constants/theme';
@@ -80,6 +88,11 @@ const AppRoutes = () => {
           </AdminRoute>
         }
       />
+
+      {/* ----------------------------------------
+          SAMPLING MASTER ROUTES
+          ---------------------------------------- */}
+      {/* Sampling Master - List View */}
       <Route
         path="/admin/sampling-master"
         element={
@@ -91,6 +104,57 @@ const AppRoutes = () => {
         }
       />
       
+      {/* Sampling Plan - New Entry */}
+      <Route
+        path="/admin/sampling-master/sampling-plan/new"
+        element={
+          <AdminRoute>
+            <MainLayout role="admin" onLogout={handleLogout}>
+              <SamplingPlanMasterPage />
+            </MainLayout>
+          </AdminRoute>
+        }
+      />
+      
+      {/* Sampling Plan - Edit Entry */}
+      <Route
+        path="/admin/sampling-master/sampling-plan/edit/:id"
+        element={
+          <AdminRoute>
+            <MainLayout role="admin" onLogout={handleLogout}>
+              <SamplingPlanMasterPage />
+            </MainLayout>
+          </AdminRoute>
+        }
+      />
+      
+      {/* Quality Plan - New Entry */}
+      <Route
+        path="/admin/sampling-master/quality-plan/new"
+        element={
+          <AdminRoute>
+            <MainLayout role="admin" onLogout={handleLogout}>
+              <QualityPlanConfigPage />
+            </MainLayout>
+          </AdminRoute>
+        }
+      />
+      
+      {/* Quality Plan - Edit Entry */}
+      <Route
+        path="/admin/sampling-master/quality-plan/edit/:id"
+        element={
+          <AdminRoute>
+            <MainLayout role="admin" onLogout={handleLogout}>
+              <QualityPlanConfigPage />
+            </MainLayout>
+          </AdminRoute>
+        }
+      />
+
+      {/* ----------------------------------------
+          COMPONENT MASTER ROUTES
+          ---------------------------------------- */}
       {/* Component Master - List View */}
       <Route
         path="/admin/component-master"
@@ -103,7 +167,7 @@ const AppRoutes = () => {
         }
       />
       
-      {/* Component Master - New Entry (NEW ROUTE) */}
+      {/* Component Master - New Entry */}
       <Route
         path="/admin/component-master/new"
         element={
@@ -115,7 +179,7 @@ const AppRoutes = () => {
         }
       />
       
-      {/* Component Master - Edit Entry (NEW ROUTE) */}
+      {/* Component Master - Edit Entry */}
       <Route
         path="/admin/component-master/edit/:id"
         element={
@@ -127,6 +191,9 @@ const AppRoutes = () => {
         }
       />
       
+      {/* ----------------------------------------
+          OTHER ADMIN ROUTES
+          ---------------------------------------- */}
       <Route
         path="/admin/users"
         element={
