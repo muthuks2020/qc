@@ -51,56 +51,775 @@ const mockQCPlans = [
 
 const mockComponents = [
   {
-    id: 'COMP-001',
-    productCategory: 'electronics',
-    productGroup: 'Display Modules',
-    partCode: 'BSC-DM-001',
-    partName: 'LCD Display Panel 7"',
-    qcPlanNo: 'RD.7.3-02',
-    inspectionType: 'sampling',
-    samplingPlan: 'SP-002',
-    drawingNo: 'DWG-DM-001-R2',
-    drawingAttachment: null,
-    testCertRequired: true,
-    specRequired: true,
-    fqirRequired: false,
-    prProcessCode: 'direct_purchase',
-    checkingParameters: {
-      type: 'visual',
-      parameters: [
-        { id: 1, checkingPoint: 'Screen Surface', unit: 'mm', specification: 'No scratches or cracks', instrumentName: '', toleranceMin: '', toleranceMax: '' },
-        { id: 2, checkingPoint: 'Display Color', unit: 'units', specification: 'Uniform brightness', instrumentName: '', toleranceMin: '', toleranceMax: '' },
-      ],
+    "id": "COMP-AACS-173",
+    "productCategory": "electronics",
+    "productGroup": "Connectors",
+    "partCode": "AACS-173",
+    "partName": "3PIN GILLARD MALE& FEMALE",
+    "qcPlanNo": "RD-7.3-07-D1-01",
+    "inspectionType": "sampling",
+    "samplingPlan": "Table-1",
+    "drawingNo": "",
+    "drawingAttachment": null,
+    "testCertRequired": true,
+    "specRequired": true,
+    "fqirRequired": false,
+    "prProcessCode": "direct_purchase",
+    "checkingParameters": {
+      "type": "visual",
+      "parameters": [
+        {
+          "id": 1,
+          "checkingPoint": "As per part number",
+          "unit": "PIN",
+          "specification": "3PIN GILLARD MALE& FEMALE",
+          "instrumentName": "Visual",
+          "toleranceMin": "",
+          "toleranceMax": ""
+        },
+        {
+          "id": 2,
+          "checkingPoint": "Damage Checking",
+          "unit": "",
+          "specification": "No damages",
+          "instrumentName": "Visual",
+          "toleranceMin": "",
+          "toleranceMax": ""
+        }
+      ]
     },
-    status: 'active',
-    createdAt: '2026-01-15T10:30:00Z',
-    updatedAt: '2026-01-28T14:20:00Z',
+    "status": "active",
+    "createdAt": "2026-02-02T09:46:36Z",
+    "updatedAt": "2026-02-02T09:46:36Z"
   },
   {
-    id: 'COMP-002',
-    productCategory: 'electrical',
-    productGroup: 'Cables',
-    partCode: 'BSC-CB-002',
-    partName: 'Probe Cable Assembly',
-    qcPlanNo: 'RD.7.3-03',
-    inspectionType: '100%',
-    samplingPlan: null,
-    drawingNo: 'DWG-CB-002-R1',
-    drawingAttachment: null,
-    testCertRequired: true,
-    specRequired: true,
-    fqirRequired: true,
-    prProcessCode: 'external_job_work',
-    checkingParameters: {
-      type: 'functional',
-      parameters: [
-        { id: 1, checkingPoint: 'Continuity', unit: 'Ω', specification: '< 0.5 Ohm', instrumentName: 'Multimeter', toleranceMin: '0', toleranceMax: '0.5' },
-        { id: 2, checkingPoint: 'Cable Length', unit: 'mm', specification: '2500mm', instrumentName: 'Measuring Tape', toleranceMin: '2450', toleranceMax: '2550' },
-      ],
+    "id": "COMP-EETD-034",
+    "productCategory": "electrical",
+    "productGroup": "Transformers",
+    "partCode": "EETD-034",
+    "partName": "29V/3A TRANSFORMER",
+    "qcPlanNo": "RD-7.3-07-D1-01",
+    "inspectionType": "sampling",
+    "samplingPlan": "Table-3",
+    "drawingNo": "",
+    "drawingAttachment": null,
+    "testCertRequired": true,
+    "specRequired": true,
+    "fqirRequired": false,
+    "prProcessCode": "direct_purchase",
+    "checkingParameters": {
+      "type": "electrical",
+      "parameters": [
+        {
+          "id": 1,
+          "checkingPoint": "Output Voltage",
+          "unit": "V",
+          "specification": "3V AC +/- 0.15",
+          "instrumentName": "Multimeter",
+          "toleranceMin": "",
+          "toleranceMax": ""
+        },
+        {
+          "id": 2,
+          "checkingPoint": "Output Voltage",
+          "unit": "V",
+          "specification": "4V AC +/- 0.2",
+          "instrumentName": "Multimeter",
+          "toleranceMin": "",
+          "toleranceMax": ""
+        },
+        {
+          "id": 3,
+          "checkingPoint": "Output Voltage",
+          "unit": "V",
+          "specification": "14V AC +/- 0.7",
+          "instrumentName": "Multimeter",
+          "toleranceMin": "",
+          "toleranceMax": ""
+        },
+        {
+          "id": 4,
+          "checkingPoint": "Output Voltage",
+          "unit": "V",
+          "specification": "29V AC +/- 1.5",
+          "instrumentName": "Multimeter",
+          "toleranceMin": "",
+          "toleranceMax": ""
+        },
+        {
+          "id": 5,
+          "checkingPoint": "Damage Checking",
+          "unit": "",
+          "specification": "No damages",
+          "instrumentName": "Visual",
+          "toleranceMin": "",
+          "toleranceMax": ""
+        }
+      ]
     },
-    status: 'active',
-    createdAt: '2026-01-10T09:00:00Z',
-    updatedAt: '2026-01-25T11:45:00Z',
+    "status": "active",
+    "createdAt": "2026-02-02T09:46:36Z",
+    "updatedAt": "2026-02-02T09:46:36Z"
+  },
+  {
+    "id": "COMP-EEWA-029",
+    "productCategory": "electrical",
+    "productGroup": "Wiring & Cables",
+    "partCode": "EEWA-029",
+    "partName": "2 CORE WIRE COIL-23/60 T.F.R",
+    "qcPlanNo": "RD-7.3-07-D1-01",
+    "inspectionType": "sampling",
+    "samplingPlan": "Table-2",
+    "drawingNo": "",
+    "drawingAttachment": null,
+    "testCertRequired": true,
+    "specRequired": true,
+    "fqirRequired": false,
+    "prProcessCode": "direct_purchase",
+    "checkingParameters": {
+      "type": "visual",
+      "parameters": [
+        {
+          "id": 1,
+          "checkingPoint": "As per specefication",
+          "unit": "CORE",
+          "specification": "2 CORE WIRE COIL-23/60 T.F.R",
+          "instrumentName": "Visual",
+          "toleranceMin": "",
+          "toleranceMax": ""
+        },
+        {
+          "id": 2,
+          "checkingPoint": "Damage Checking",
+          "unit": "",
+          "specification": "No damages",
+          "instrumentName": "Visual",
+          "toleranceMin": "",
+          "toleranceMax": ""
+        }
+      ]
+    },
+    "status": "active",
+    "createdAt": "2026-02-02T09:46:36Z",
+    "updatedAt": "2026-02-02T09:46:36Z"
+  },
+  {
+    "id": "COMP-RCNA-001",
+    "productCategory": "mechanical",
+    "productGroup": "Frames & Chassis",
+    "partCode": "RCNA-001",
+    "partName": "CHANNEL FRAME - REGULAR",
+    "qcPlanNo": "RD-7.3-07-D1-01",
+    "inspectionType": "sampling",
+    "samplingPlan": "Table-2",
+    "drawingNo": "",
+    "drawingAttachment": null,
+    "testCertRequired": false,
+    "specRequired": true,
+    "fqirRequired": false,
+    "prProcessCode": "direct_purchase",
+    "checkingParameters": {
+      "type": "dimensional_visual",
+      "parameters": [
+        {
+          "id": 1,
+          "checkingPoint": "Length",
+          "unit": "mm",
+          "specification": "570mm +/-0.8",
+          "instrumentName": "Scale",
+          "toleranceMin": "569.2",
+          "toleranceMax": "570.8"
+        },
+        {
+          "id": 2,
+          "checkingPoint": "Breath",
+          "unit": "mm",
+          "specification": "138mm +/-0.5",
+          "instrumentName": "Vernier",
+          "toleranceMin": "137.5",
+          "toleranceMax": "138.5"
+        },
+        {
+          "id": 3,
+          "checkingPoint": "Height",
+          "unit": "mm",
+          "specification": "520mm +/-0.8",
+          "instrumentName": "Scale",
+          "toleranceMin": "519.2",
+          "toleranceMax": "520.8"
+        },
+        {
+          "id": 4,
+          "checkingPoint": "PCD",
+          "unit": "mm",
+          "specification": "207mm +/-0.5",
+          "instrumentName": "Scale",
+          "toleranceMin": "206.5",
+          "toleranceMax": "207.5"
+        },
+        {
+          "id": 5,
+          "checkingPoint": "PCD",
+          "unit": "mm",
+          "specification": "143mm +/-0.5",
+          "instrumentName": "Vernier",
+          "toleranceMin": "142.5",
+          "toleranceMax": "143.5"
+        },
+        {
+          "id": 6,
+          "checkingPoint": "PCD",
+          "unit": "mm",
+          "specification": "102mm +/-0.3",
+          "instrumentName": "Vernier",
+          "toleranceMin": "101.7",
+          "toleranceMax": "102.3"
+        },
+        {
+          "id": 7,
+          "checkingPoint": "PCD",
+          "unit": "mm",
+          "specification": "72mm +/-0.3",
+          "instrumentName": "Vernier",
+          "toleranceMin": "71.7",
+          "toleranceMax": "72.3"
+        },
+        {
+          "id": 8,
+          "checkingPoint": "PCD",
+          "unit": "mm",
+          "specification": "70mm +/-0.3",
+          "instrumentName": "Vernier",
+          "toleranceMin": "69.7",
+          "toleranceMax": "70.3"
+        },
+        {
+          "id": 9,
+          "checkingPoint": "PCD",
+          "unit": "mm",
+          "specification": "60mm +/-0.3",
+          "instrumentName": "Vernier",
+          "toleranceMin": "59.7",
+          "toleranceMax": "60.3"
+        },
+        {
+          "id": 10,
+          "checkingPoint": "PCD",
+          "unit": "mm",
+          "specification": "55mm +/-0.3",
+          "instrumentName": "Vernier",
+          "toleranceMin": "54.7",
+          "toleranceMax": "55.3"
+        },
+        {
+          "id": 11,
+          "checkingPoint": "Inner diameter",
+          "unit": "mm",
+          "specification": "13mm +/-0.2",
+          "instrumentName": "Vernier",
+          "toleranceMin": "12.8",
+          "toleranceMax": "13.2"
+        },
+        {
+          "id": 12,
+          "checkingPoint": "Inner diameter",
+          "unit": "mm",
+          "specification": "8mm +/-0.2",
+          "instrumentName": "Vernier",
+          "toleranceMin": "7.8",
+          "toleranceMax": "8.2"
+        },
+        {
+          "id": 13,
+          "checkingPoint": "Inner diameter",
+          "unit": "mm",
+          "specification": "4mm +/-0.1",
+          "instrumentName": "Vernier",
+          "toleranceMin": "3.9",
+          "toleranceMax": "4.1"
+        },
+        {
+          "id": 14,
+          "checkingPoint": "Inner diameter",
+          "unit": "mm",
+          "specification": "11mm +/-0.2",
+          "instrumentName": "Vernier",
+          "toleranceMin": "10.8",
+          "toleranceMax": "11.2"
+        },
+        {
+          "id": 15,
+          "checkingPoint": "Inner diameter",
+          "unit": "mm",
+          "specification": "8mm +/-0.2",
+          "instrumentName": "Vernier",
+          "toleranceMin": "7.8",
+          "toleranceMax": "8.2"
+        },
+        {
+          "id": 16,
+          "checkingPoint": "Thickness",
+          "unit": "mm",
+          "specification": "19mm +/-0.2",
+          "instrumentName": "Vernier",
+          "toleranceMin": "18.8",
+          "toleranceMax": "19.2"
+        },
+        {
+          "id": 17,
+          "checkingPoint": "Thickness",
+          "unit": "mm",
+          "specification": "5mm +/-0.1",
+          "instrumentName": "Vernier",
+          "toleranceMin": "4.9",
+          "toleranceMax": "5.1"
+        },
+        {
+          "id": 18,
+          "checkingPoint": "Thickness",
+          "unit": "mm",
+          "specification": "1.5mm +/-0.1",
+          "instrumentName": "Vernier",
+          "toleranceMin": "1.4",
+          "toleranceMax": "1.6"
+        },
+        {
+          "id": 19,
+          "checkingPoint": "Damage Checking",
+          "unit": "",
+          "specification": "No damages",
+          "instrumentName": "Visual",
+          "toleranceMin": "",
+          "toleranceMax": ""
+        }
+      ]
+    },
+    "status": "active",
+    "createdAt": "2026-02-02T09:46:36Z",
+    "updatedAt": "2026-02-02T09:46:36Z"
+  },
+  {
+    "id": "COMP-RCNA-011",
+    "productCategory": "mechanical",
+    "productGroup": "Packaging",
+    "partCode": "RCNA-011",
+    "partName": "CHANNEL CORRUGATED BOX-R",
+    "qcPlanNo": "RD-7.3-07-D1-01",
+    "inspectionType": "sampling",
+    "samplingPlan": "Table-1",
+    "drawingNo": "",
+    "drawingAttachment": null,
+    "testCertRequired": false,
+    "specRequired": true,
+    "fqirRequired": false,
+    "prProcessCode": "direct_purchase",
+    "checkingParameters": {
+      "type": "dimensional_visual",
+      "parameters": [
+        {
+          "id": 1,
+          "checkingPoint": "Length",
+          "unit": "CM",
+          "specification": "67.5 CM",
+          "instrumentName": "Scale",
+          "toleranceMin": "",
+          "toleranceMax": ""
+        },
+        {
+          "id": 2,
+          "checkingPoint": "Breath",
+          "unit": "CM",
+          "specification": "67.5 CM",
+          "instrumentName": "Scale",
+          "toleranceMin": "",
+          "toleranceMax": ""
+        },
+        {
+          "id": 3,
+          "checkingPoint": "Height",
+          "unit": "CM",
+          "specification": "22 CM",
+          "instrumentName": "Scale",
+          "toleranceMin": "",
+          "toleranceMax": ""
+        },
+        {
+          "id": 4,
+          "checkingPoint": "Ply",
+          "unit": "ply",
+          "specification": "7ply",
+          "instrumentName": "Visual",
+          "toleranceMin": "",
+          "toleranceMax": ""
+        },
+        {
+          "id": 5,
+          "checkingPoint": "Damage Checking",
+          "unit": "",
+          "specification": "No damages",
+          "instrumentName": "Visual",
+          "toleranceMin": "",
+          "toleranceMax": ""
+        }
+      ]
+    },
+    "status": "active",
+    "createdAt": "2026-02-02T09:46:36Z",
+    "updatedAt": "2026-02-02T09:46:36Z"
+  },
+  {
+    "id": "COMP-RCNA-034",
+    "productCategory": "mechanical",
+    "productGroup": "Bearings",
+    "partCode": "RCNA-034",
+    "partName": "BEARING-6008",
+    "qcPlanNo": "RD-7.3-07-D1-01",
+    "inspectionType": "sampling",
+    "samplingPlan": "Table-2",
+    "drawingNo": "",
+    "drawingAttachment": null,
+    "testCertRequired": false,
+    "specRequired": true,
+    "fqirRequired": false,
+    "prProcessCode": "direct_purchase",
+    "checkingParameters": {
+      "type": "visual",
+      "parameters": [
+        {
+          "id": 1,
+          "checkingPoint": "As per part number",
+          "unit": "ZZ",
+          "specification": "6008ZZ",
+          "instrumentName": "Visual",
+          "toleranceMin": "",
+          "toleranceMax": ""
+        },
+        {
+          "id": 2,
+          "checkingPoint": "Damage Checking",
+          "unit": "",
+          "specification": "No damages",
+          "instrumentName": "Visual",
+          "toleranceMin": "",
+          "toleranceMax": ""
+        }
+      ]
+    },
+    "status": "active",
+    "createdAt": "2026-02-02T09:46:36Z",
+    "updatedAt": "2026-02-02T09:46:36Z"
+  },
+  {
+    "id": "COMP-RCNA-035.1",
+    "productCategory": "mechanical",
+    "productGroup": "Locks & Fasteners",
+    "partCode": "RCNA-035.1",
+    "partName": "90 DEGREE LOCK & NUT",
+    "qcPlanNo": "RD-7.3-07-D1-01",
+    "inspectionType": "sampling",
+    "samplingPlan": "Table-2",
+    "drawingNo": "",
+    "drawingAttachment": null,
+    "testCertRequired": false,
+    "specRequired": true,
+    "fqirRequired": false,
+    "prProcessCode": "direct_purchase",
+    "checkingParameters": {
+      "type": "dimensional_visual",
+      "parameters": [
+        {
+          "id": 1,
+          "checkingPoint": "Length",
+          "unit": "mm",
+          "specification": "106.3mm +/- 0.3",
+          "instrumentName": "Vernier",
+          "toleranceMin": "106.0",
+          "toleranceMax": "106.6"
+        },
+        {
+          "id": 2,
+          "checkingPoint": "Breath",
+          "unit": "mm",
+          "specification": "48mm +/- 0.3",
+          "instrumentName": "Vernier",
+          "toleranceMin": "47.7",
+          "toleranceMax": "48.3"
+        },
+        {
+          "id": 3,
+          "checkingPoint": "Outer diameter 1",
+          "unit": "mm",
+          "specification": "55mm +/- 0.3",
+          "instrumentName": "Vernier",
+          "toleranceMin": "54.7",
+          "toleranceMax": "55.3"
+        },
+        {
+          "id": 4,
+          "checkingPoint": "Inner diameter 1",
+          "unit": "mm",
+          "specification": "38mm +/- 0.3",
+          "instrumentName": "Vernier",
+          "toleranceMin": "37.7",
+          "toleranceMax": "38.3"
+        },
+        {
+          "id": 5,
+          "checkingPoint": "Outer diameter 2",
+          "unit": "mm",
+          "specification": "20mm +/- 0.2",
+          "instrumentName": "Vernier",
+          "toleranceMin": "19.8",
+          "toleranceMax": "20.2"
+        },
+        {
+          "id": 6,
+          "checkingPoint": "Inner diameter 2",
+          "unit": "mm",
+          "specification": "8mm +/- 0.2",
+          "instrumentName": "Vernier",
+          "toleranceMin": "7.8",
+          "toleranceMax": "8.2"
+        },
+        {
+          "id": 7,
+          "checkingPoint": "Height",
+          "unit": "mm",
+          "specification": "11mm +/- 0.2",
+          "instrumentName": "Vernier",
+          "toleranceMin": "10.8",
+          "toleranceMax": "11.2"
+        },
+        {
+          "id": 8,
+          "checkingPoint": "Thickness",
+          "unit": "mm",
+          "specification": "8.5mm +/- 0.2",
+          "instrumentName": "Vernier",
+          "toleranceMin": "8.3",
+          "toleranceMax": "8.7"
+        },
+        {
+          "id": 9,
+          "checkingPoint": "Damage Checking",
+          "unit": "",
+          "specification": "No damages",
+          "instrumentName": "Visual",
+          "toleranceMin": "",
+          "toleranceMax": ""
+        }
+      ]
+    },
+    "status": "active",
+    "createdAt": "2026-02-02T09:46:36Z",
+    "updatedAt": "2026-02-02T09:46:36Z"
+  },
+  {
+    "id": "COMP-RCNA-104",
+    "productCategory": "mechanical",
+    "productGroup": "Labels & Stickers",
+    "partCode": "RCNA-104",
+    "partName": "EC REP STICKER",
+    "qcPlanNo": "RD-7.3-07-D1-01",
+    "inspectionType": "sampling",
+    "samplingPlan": "Table-1",
+    "drawingNo": "",
+    "drawingAttachment": null,
+    "testCertRequired": false,
+    "specRequired": true,
+    "fqirRequired": false,
+    "prProcessCode": "ec_rep_sticker",
+    "checkingParameters": {
+      "type": "visual",
+      "parameters": [
+        {
+          "id": 1,
+          "checkingPoint": "Art work checking",
+          "unit": "",
+          "specification": "As per sample",
+          "instrumentName": "Visual",
+          "toleranceMin": "",
+          "toleranceMax": ""
+        },
+        {
+          "id": 2,
+          "checkingPoint": "Damage Checking",
+          "unit": "",
+          "specification": "No damages",
+          "instrumentName": "Visual",
+          "toleranceMin": "",
+          "toleranceMax": ""
+        }
+      ]
+    },
+    "status": "active",
+    "createdAt": "2026-02-02T09:46:36Z",
+    "updatedAt": "2026-02-02T09:46:36Z"
+  },
+  {
+    "id": "COMP-RSFA-061",
+    "productCategory": "hardware",
+    "productGroup": "Fasteners",
+    "partCode": "RSFA-061",
+    "partName": "3M.M HD WASHER",
+    "qcPlanNo": "RD-7.3-07-D1-01",
+    "inspectionType": "sampling",
+    "samplingPlan": "Table-1",
+    "drawingNo": "",
+    "drawingAttachment": null,
+    "testCertRequired": false,
+    "specRequired": true,
+    "fqirRequired": false,
+    "prProcessCode": "direct_purchase",
+    "checkingParameters": {
+      "type": "dimensional_visual",
+      "parameters": [
+        {
+          "id": 1,
+          "checkingPoint": "Inner diameter",
+          "unit": "mm",
+          "specification": "10mm +/- 0.2",
+          "instrumentName": "Vernier",
+          "toleranceMin": "9.8",
+          "toleranceMax": "10.2"
+        },
+        {
+          "id": 2,
+          "checkingPoint": "Outer diameter",
+          "unit": "mm",
+          "specification": "16mm +/- 0.2",
+          "instrumentName": "Vernier",
+          "toleranceMin": "15.8",
+          "toleranceMax": "16.2"
+        },
+        {
+          "id": 3,
+          "checkingPoint": "Thickness",
+          "unit": "mm",
+          "specification": "3mm +/- 0.1",
+          "instrumentName": "Vernier",
+          "toleranceMin": "2.9",
+          "toleranceMax": "3.1"
+        },
+        {
+          "id": 4,
+          "checkingPoint": "Damage Checking",
+          "unit": "",
+          "specification": "No damages",
+          "instrumentName": "Visual",
+          "toleranceMin": "",
+          "toleranceMax": ""
+        }
+      ]
+    },
+    "status": "active",
+    "createdAt": "2026-02-02T09:46:36Z",
+    "updatedAt": "2026-02-02T09:46:36Z"
+  },
+  {
+    "id": "COMP-RUBA-001",
+    "productCategory": "mechanical",
+    "productGroup": "Plates & Panels",
+    "partCode": "RUBA-001",
+    "partName": "M.S BASE PLATE",
+    "qcPlanNo": "RD-7.3-07-D1-01",
+    "inspectionType": "sampling",
+    "samplingPlan": "Table-2",
+    "drawingNo": "",
+    "drawingAttachment": null,
+    "testCertRequired": false,
+    "specRequired": true,
+    "fqirRequired": false,
+    "prProcessCode": "direct_purchase",
+    "checkingParameters": {
+      "type": "dimensional_visual",
+      "parameters": [
+        {
+          "id": 1,
+          "checkingPoint": "Length",
+          "unit": "mm",
+          "specification": "835mm +/- 0.8",
+          "instrumentName": "Scale",
+          "toleranceMin": "834.2",
+          "toleranceMax": "835.8"
+        },
+        {
+          "id": 2,
+          "checkingPoint": "Breath",
+          "unit": "mm",
+          "specification": "782mm +/- 0.8",
+          "instrumentName": "Scale",
+          "toleranceMin": "781.2",
+          "toleranceMax": "782.8"
+        },
+        {
+          "id": 3,
+          "checkingPoint": "Length 2",
+          "unit": "mm",
+          "specification": "475mm +/-0.8",
+          "instrumentName": "Scale",
+          "toleranceMin": "474.2",
+          "toleranceMax": "475.8"
+        },
+        {
+          "id": 4,
+          "checkingPoint": "Breath 2",
+          "unit": "mm",
+          "specification": "485mm +/-0.8",
+          "instrumentName": "Scale",
+          "toleranceMin": "484.2",
+          "toleranceMax": "485.8"
+        },
+        {
+          "id": 5,
+          "checkingPoint": "Inner diameter",
+          "unit": "mm",
+          "specification": "10mm +/-0.2",
+          "instrumentName": "Vernier",
+          "toleranceMin": "9.8",
+          "toleranceMax": "10.2"
+        },
+        {
+          "id": 6,
+          "checkingPoint": "Inner diameter",
+          "unit": "mm",
+          "specification": "8mm +/-0.2",
+          "instrumentName": "Vernier",
+          "toleranceMin": "7.8",
+          "toleranceMax": "8.2"
+        },
+        {
+          "id": 7,
+          "checkingPoint": "Thickness",
+          "unit": "mm",
+          "specification": "12mm +/-0.2",
+          "instrumentName": "Vernier",
+          "toleranceMin": "11.8",
+          "toleranceMax": "12.2"
+        },
+        {
+          "id": 8,
+          "checkingPoint": "Thickness",
+          "unit": "mm",
+          "specification": "8mm +/- 0.2",
+          "instrumentName": "Vernier",
+          "toleranceMin": "7.8",
+          "toleranceMax": "8.2"
+        },
+        {
+          "id": 9,
+          "checkingPoint": "Damage Checking",
+          "unit": "",
+          "specification": "No damages",
+          "instrumentName": "Visual",
+          "toleranceMin": "",
+          "toleranceMax": ""
+        }
+      ]
+    },
+    "status": "active",
+    "createdAt": "2026-02-02T09:46:36Z",
+    "updatedAt": "2026-02-02T09:46:36Z"
   },
   {
     id: 'COMP-003',

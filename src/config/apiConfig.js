@@ -122,10 +122,6 @@ export const API_ENDPOINTS = {
 };
 
 
-// ============================================
-// CONFIGURATION SETTINGS
-// ============================================
-
 export const API_CONFIG = {
   timeout: 30000,
   retryAttempts: 3,
