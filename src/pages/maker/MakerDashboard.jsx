@@ -19,7 +19,7 @@ import { useAuth } from '../../contexts/AuthContext';
 // Mock data for pending jobs
 const mockPendingJobs = [
   {
-    "id": "VAL-001",
+    "id": "INS-2026-0350",
     "jobId": "JOB-AACS-173",
     "batchNo": "25-12-002",
     "productName": "3PIN GILLARD MALE & FEMALE",
@@ -34,7 +34,7 @@ const mockPendingJobs = [
     "notes": "All checkpoints passed. Visual inspection completed."
   },
   {
-    "id": "VAL-002",
+    "id": "INS-2026-0302",
     "jobId": "JOB-RCNA-001",
     "batchNo": "26-01-001",
     "productName": "CHANNEL FRAME - REGULAR",
@@ -49,7 +49,7 @@ const mockPendingJobs = [
     "notes": "Comprehensive dimensional inspection completed. All 18 measurement checkpoints within tolerance."
   },
   {
-    "id": "VAL-003",
+    "id": "INS-2026-0352",
     "jobId": "JOB-RCNA-011",
     "batchNo": "26-01-002",
     "productName": "CHANNEL CORRUGATED BOX-R",
@@ -79,7 +79,7 @@ const mockPendingJobs = [
     "notes": "Visual inspection for bearing part number and damage check completed."
   },
   {
-    "id": "VAL-005",
+    "id": "INS-2026-0353",
     "jobId": "JOB-RCNA-035",
     "batchNo": "26-01-003",
     "productName": "90 DEGREE LOCK & NUT",
@@ -94,7 +94,7 @@ const mockPendingJobs = [
     "notes": "Precision dimensional inspection completed. All measurements within specified tolerances."
   },
   {
-    "id": "VAL-006",
+    "id": "INS-2026-0354",
     "jobId": "JOB-RCNA-104",
     "batchNo": "25-11-001",
     "productName": "EC REP STICKER",
@@ -139,7 +139,7 @@ const mockPendingJobs = [
     "notes": "Electrical wire coil specification and damage check completed."
   },
   {
-    "id": "VAL-009",
+    "id": "INS-2026-0228",
     "jobId": "JOB-EETD-034",
     "batchNo": "26-01-003",
     "productName": "29V/3A TRANSFORMER",
@@ -154,7 +154,7 @@ const mockPendingJobs = [
     "notes": "Electrical output voltage testing completed. All voltage outputs within tolerance."
   },
   {
-    "id": "VAL-010",
+    "id": "INS-2026-0276",
     "jobId": "JOB-RUBA-001",
     "batchNo": "26-01-001",
     "productName": "M.S BASE PLATE",

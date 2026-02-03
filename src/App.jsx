@@ -18,9 +18,13 @@ import QualityPlanConfigPage from './pages/admin/sampling-master/QualityPlanConf
 import ComponentMasterPage from './pages/admin/ComponentMasterPage';
 import ComponentMasterEntryPage from './pages/admin/component-master/ComponentMasterEntryPage';
 
-// Other Dashboard Pages
+// Maker Pages
 import MakerDashboard from './pages/maker/MakerDashboard';
+import InspectionExecutionPage from './pages/maker/inspection/InspectionExecutionPage';
+
+// Checker Pages
 import CheckerDashboard from './pages/checker/CheckerDashboard';
+
 import { colors } from './constants/theme';
 
 /**
@@ -61,23 +65,18 @@ const AppRoutes = () => {
       <Route 
         path="/login" 
         element={
-          isAuthenticated ? (
-            <Navigate to={getHomeRoute()} replace />
-          ) : (
+          isAuthenticated ? 
+            <Navigate to={getHomeRoute()} replace /> : 
             <LoginPage onLoginSuccess={handleLoginSuccess} />
-          )
         } 
       />
-      
-      {/* SSO Callback Route */}
-      <Route 
-        path="/auth/callback" 
-        element={<SSOCallback />} 
-      />
 
-      {/* ============================================
-          ADMIN ROUTES
-          ============================================ */}
+      {/* OAuth Callback Route */}
+      <Route path="/auth/callback" element={<LoginPage onLoginSuccess={handleLoginSuccess} />} />
+
+      {/* ==================== ADMIN ROUTES ==================== */}
+      
+      {/* Admin Dashboard */}
       <Route
         path="/admin"
         element={
@@ -89,10 +88,7 @@ const AppRoutes = () => {
         }
       />
 
-      {/* ----------------------------------------
-          SAMPLING MASTER ROUTES
-          ---------------------------------------- */}
-      {/* Sampling Master - List View */}
+      {/* Sampling Master - List */}
       <Route
         path="/admin/sampling-master"
         element={
@@ -103,8 +99,8 @@ const AppRoutes = () => {
           </AdminRoute>
         }
       />
-      
-      {/* Sampling Plan - New Entry */}
+
+      {/* Sampling Plan Master - Create New */}
       <Route
         path="/admin/sampling-master/sampling-plan/new"
         element={
@@ -115,8 +111,8 @@ const AppRoutes = () => {
           </AdminRoute>
         }
       />
-      
-      {/* Sampling Plan - Edit Entry */}
+
+      {/* Sampling Plan Master - Edit */}
       <Route
         path="/admin/sampling-master/sampling-plan/edit/:id"
         element={
@@ -127,8 +123,8 @@ const AppRoutes = () => {
           </AdminRoute>
         }
       />
-      
-      {/* Quality Plan - New Entry */}
+
+      {/* Quality Plan Configuration - Create New */}
       <Route
         path="/admin/sampling-master/quality-plan/new"
         element={
@@ -139,8 +135,8 @@ const AppRoutes = () => {
           </AdminRoute>
         }
       />
-      
-      {/* Quality Plan - Edit Entry */}
+
+      {/* Quality Plan Configuration - Edit */}
       <Route
         path="/admin/sampling-master/quality-plan/edit/:id"
         element={
@@ -152,10 +148,7 @@ const AppRoutes = () => {
         }
       />
 
-      {/* ----------------------------------------
-          COMPONENT MASTER ROUTES
-          ---------------------------------------- */}
-      {/* Component Master - List View */}
+      {/* Component Master - List */}
       <Route
         path="/admin/component-master"
         element={
@@ -166,7 +159,7 @@ const AppRoutes = () => {
           </AdminRoute>
         }
       />
-      
+
       {/* Component Master - New Entry */}
       <Route
         path="/admin/component-master/new"
@@ -178,7 +171,7 @@ const AppRoutes = () => {
           </AdminRoute>
         }
       />
-      
+
       {/* Component Master - Edit Entry */}
       <Route
         path="/admin/component-master/edit/:id"
@@ -190,44 +183,10 @@ const AppRoutes = () => {
           </AdminRoute>
         }
       />
-      
-      {/* ----------------------------------------
-          OTHER ADMIN ROUTES
-          ---------------------------------------- */}
-      <Route
-        path="/admin/users"
-        element={
-          <AdminRoute>
-            <MainLayout role="admin" onLogout={handleLogout}>
-              <PlaceholderPage title="User Management" subtitle="Manage user accounts and permissions" />
-            </MainLayout>
-          </AdminRoute>
-        }
-      />
-      <Route
-        path="/admin/reports"
-        element={
-          <AdminRoute>
-            <MainLayout role="admin" onLogout={handleLogout}>
-              <PlaceholderPage title="Admin Reports" subtitle="System-wide reports and analytics" />
-            </MainLayout>
-          </AdminRoute>
-        }
-      />
-      <Route
-        path="/admin/settings"
-        element={
-          <AdminRoute>
-            <MainLayout role="admin" onLogout={handleLogout}>
-              <PlaceholderPage title="System Settings" subtitle="Configure application settings" />
-            </MainLayout>
-          </AdminRoute>
-        }
-      />
 
-      {/* ============================================
-          MAKER (QC PERSON) ROUTES
-          ============================================ */}
+      {/* ==================== MAKER ROUTES ==================== */}
+      
+      {/* Maker Dashboard */}
       <Route
         path="/maker"
         element={
@@ -238,60 +197,22 @@ const AppRoutes = () => {
           </MakerRoute>
         }
       />
+
+      {/* Inspection Execution - NEW ROUTE */}
       <Route
-        path="/maker/inspection"
+        path="/maker/inspection/:inspectionId"
         element={
           <MakerRoute>
             <MainLayout role="maker" onLogout={handleLogout}>
-              <PlaceholderPage title="Inspection" subtitle="Perform quality inspections" />
-            </MainLayout>
-          </MakerRoute>
-        }
-      />
-      <Route
-        path="/maker/inspection/:jobId"
-        element={
-          <MakerRoute>
-            <MainLayout role="maker" onLogout={handleLogout}>
-              <PlaceholderPage title="Job Inspection" subtitle="Inspecting job..." />
-            </MainLayout>
-          </MakerRoute>
-        }
-      />
-      <Route
-        path="/maker/batches"
-        element={
-          <MakerRoute>
-            <MainLayout role="maker" onLogout={handleLogout}>
-              <PlaceholderPage title="Batch Management" subtitle="View and manage inspection batches" />
-            </MainLayout>
-          </MakerRoute>
-        }
-      />
-      <Route
-        path="/maker/history"
-        element={
-          <MakerRoute>
-            <MainLayout role="maker" onLogout={handleLogout}>
-              <PlaceholderPage title="Inspection History" subtitle="View past inspections" />
-            </MainLayout>
-          </MakerRoute>
-        }
-      />
-      <Route
-        path="/maker/reports"
-        element={
-          <MakerRoute>
-            <MainLayout role="maker" onLogout={handleLogout}>
-              <PlaceholderPage title="QC Reports" subtitle="Generate and view QC reports" />
+              <InspectionExecutionPage />
             </MainLayout>
           </MakerRoute>
         }
       />
 
-      {/* ============================================
-          CHECKER (VALIDATOR) ROUTES
-          ============================================ */}
+      {/* ==================== CHECKER ROUTES ==================== */}
+      
+      {/* Checker Dashboard */}
       <Route
         path="/checker"
         element={
@@ -302,48 +223,10 @@ const AppRoutes = () => {
           </CheckerRoute>
         }
       />
-      <Route
-        path="/checker/pending"
-        element={
-          <CheckerRoute>
-            <MainLayout role="checker" onLogout={handleLogout}>
-              <PlaceholderPage title="Pending Review" subtitle="Jobs awaiting validation" />
-            </MainLayout>
-          </CheckerRoute>
-        }
-      />
-      <Route
-        path="/checker/validated"
-        element={
-          <CheckerRoute>
-            <MainLayout role="checker" onLogout={handleLogout}>
-              <PlaceholderPage title="Validated Jobs" subtitle="Approved inspection jobs" />
-            </MainLayout>
-          </CheckerRoute>
-        }
-      />
-      <Route
-        path="/checker/rejected"
-        element={
-          <CheckerRoute>
-            <MainLayout role="checker" onLogout={handleLogout}>
-              <PlaceholderPage title="Rejected Jobs" subtitle="Jobs requiring re-inspection" />
-            </MainLayout>
-          </CheckerRoute>
-        }
-      />
-      <Route
-        path="/checker/reports"
-        element={
-          <CheckerRoute>
-            <MainLayout role="checker" onLogout={handleLogout}>
-              <PlaceholderPage title="Validation Reports" subtitle="QC validation analytics" />
-            </MainLayout>
-          </CheckerRoute>
-        }
-      />
 
-      {/* Root redirect */}
+      {/* ==================== FALLBACK ROUTES ==================== */}
+      
+      {/* Root redirect based on role */}
       <Route
         path="/"
         element={
@@ -355,109 +238,51 @@ const AppRoutes = () => {
         }
       />
 
-      {/* 404 Not Found */}
+      {/* 404 - Not Found */}
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 };
 
 /**
- * Global Loading Screen
+ * Global Loading Screen Component
+ * Displayed while checking authentication status
  */
 const GlobalLoadingScreen = () => (
   <div style={styles.loadingContainer}>
     <div style={styles.loadingContent}>
-      <div style={styles.logoWrapper}>
-        <img 
-          src="https://cdn.prod.website-files.com/637e4dc883878debd9d96de4/63df53786bf1b137a5731bb2_AA%20Logo(1).png"
-          alt="Appasamy Associates"
-          style={styles.loadingLogo}
-          onError={(e) => { e.target.style.display = 'none'; }}
-        />
-      </div>
-      <div style={styles.spinnerLarge} />
-      <p style={styles.loadingText}>Loading QC Application...</p>
+      <div style={styles.loadingSpinner}></div>
+      <h2 style={styles.loadingTitle}>Appasamy QC</h2>
+      <p style={styles.loadingText}>Loading...</p>
     </div>
   </div>
 );
 
 /**
- * SSO Callback Handler
+ * 404 Not Found Page Component
  */
-const SSOCallback = () => {
-  const { handleSSOCallback } = useAuth();
+const NotFoundPage = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const { isAuthenticated, getHomeRoute } = useAuth();
 
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const code = params.get('code');
-    const error = params.get('error');
-
-    if (error) {
-      console.error('SSO Error:', error);
-      navigate('/login', { state: { error: 'SSO authentication failed' } });
-      return;
-    }
-
-    if (code) {
-      handleSSOCallback(code).then((result) => {
-        if (result.success) {
-          navigate('/', { replace: true });
-        } else {
-          navigate('/login', { state: { error: result.error } });
-        }
-      });
+  const handleGoHome = () => {
+    if (isAuthenticated) {
+      navigate(getHomeRoute());
     } else {
       navigate('/login');
     }
-  }, [location, navigate, handleSSOCallback]);
-
-  return <GlobalLoadingScreen />;
-};
-
-/**
- * Placeholder Page for routes under development
- */
-const PlaceholderPage = ({ title, subtitle }) => (
-  <div style={styles.placeholderContainer}>
-    <div style={styles.placeholderContent}>
-      <div style={styles.placeholderIcon}>
-        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke={colors.neutral[300]} strokeWidth="1.5">
-          <rect x="3" y="3" width="18" height="18" rx="2" />
-          <path d="M3 9h18" />
-          <path d="M9 21V9" />
-        </svg>
-      </div>
-      <h1 style={styles.placeholderTitle}>{title}</h1>
-      <p style={styles.placeholderSubtitle}>{subtitle}</p>
-      <div style={styles.comingSoonBadge}>
-        Coming Soon
-      </div>
-    </div>
-  </div>
-);
-
-/**
- * 404 Not Found Page
- */
-const NotFoundPage = () => {
-  const { isAuthenticated, getHomeRoute } = useAuth();
-  const navigate = useNavigate();
+  };
 
   return (
     <div style={styles.notFoundContainer}>
       <div style={styles.notFoundContent}>
-        <h1 style={styles.notFoundCode}>404</h1>
-        <h2 style={styles.notFoundTitle}>Page Not Found</h2>
+        <div style={styles.notFound404}>404</div>
+        <h1 style={styles.notFoundTitle}>Page Not Found</h1>
         <p style={styles.notFoundText}>
           The page you're looking for doesn't exist or has been moved.
         </p>
-        <button
-          onClick={() => navigate(isAuthenticated ? getHomeRoute() : '/login')}
-          style={styles.notFoundButton}
-        >
-          Go to {isAuthenticated ? 'Dashboard' : 'Login'}
+        <button style={styles.notFoundButton} onClick={handleGoHome}>
+          Go to Home
         </button>
       </div>
     </div>
@@ -466,8 +291,9 @@ const NotFoundPage = () => {
 
 /**
  * Main App Component
+ * Wraps everything with BrowserRouter and AuthProvider
  */
-function App() {
+const App = () => {
   return (
     <BrowserRouter>
       <AuthProvider>
@@ -475,103 +301,51 @@ function App() {
       </AuthProvider>
     </BrowserRouter>
   );
-}
+};
 
-// ============================================
-// STYLES
-// ============================================
+// Styles
 const styles = {
-  // Loading Screen Styles
   loadingContainer: {
-    minHeight: '100vh',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    minHeight: '100vh',
     background: `linear-gradient(135deg, ${colors.brand.primary} 0%, ${colors.brand.secondary} 100%)`,
   },
   loadingContent: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '24px',
+    textAlign: 'center',
+    color: 'white',
   },
-  logoWrapper: {
-    padding: '16px',
-    background: 'white',
-    borderRadius: '16px',
-    boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
-  },
-  loadingLogo: {
-    height: '48px',
-    width: 'auto',
-  },
-  spinnerLarge: {
+  loadingSpinner: {
     width: '48px',
     height: '48px',
-    border: '3px solid rgba(255,255,255,0.3)',
+    border: '4px solid rgba(255, 255, 255, 0.3)',
     borderTopColor: 'white',
     borderRadius: '50%',
-    animation: 'spin 0.8s linear infinite',
+    animation: 'spin 1s linear infinite',
+    margin: '0 auto 24px',
   },
-  loadingText: {
-    color: 'white',
-    fontSize: '14px',
-    fontWeight: 500,
-  },
-  
-  // Placeholder Page Styles
-  placeholderContainer: {
-    padding: '64px 40px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: '60vh',
-  },
-  placeholderContent: {
-    textAlign: 'center',
-    maxWidth: '400px',
-  },
-  placeholderIcon: {
-    marginBottom: '24px',
-    opacity: 0.5,
-  },
-  placeholderTitle: {
+  loadingTitle: {
     fontSize: '28px',
     fontWeight: 700,
-    color: colors.neutral[800],
     marginBottom: '8px',
   },
-  placeholderSubtitle: {
+  loadingText: {
     fontSize: '14px',
-    color: colors.neutral[500],
-    marginBottom: '24px',
+    opacity: 0.9,
   },
-  comingSoonBadge: {
-    display: 'inline-block',
-    padding: '8px 16px',
-    fontSize: '12px',
-    fontWeight: 600,
-    color: colors.brand.primary,
-    background: colors.primaryLight,
-    borderRadius: '20px',
-    textTransform: 'uppercase',
-    letterSpacing: '0.5px',
-  },
-  
-  // Not Found Page Styles
   notFoundContainer: {
-    minHeight: '100vh',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    minHeight: '100vh',
     background: colors.neutral[50],
-    padding: '24px',
   },
   notFoundContent: {
     textAlign: 'center',
-    maxWidth: '400px',
+    padding: '40px',
   },
-  notFoundCode: {
+  notFound404: {
     fontSize: '96px',
     fontWeight: 700,
     color: colors.neutral[200],

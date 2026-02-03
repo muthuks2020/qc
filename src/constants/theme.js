@@ -1,94 +1,139 @@
-// Appasamy QC App - Theme Constants
-// Brand colors inspired by https://www.appasamy.com/
+/**
+ * Theme Constants
+ * Centralized design tokens for consistent UI
+ */
 
 export const colors = {
-  // Appasamy Brand Colors
+  // Brand Colors (required by existing components like Button.jsx)
   brand: {
-    primary: '#003366',      // Deep Navy Blue
-    secondary: '#004C8C',    // Medium Blue
-    accent: '#0066CC',       // Bright Blue
-    highlight: '#00A0E3',    // Light Blue
-    dark: '#001F3F',         // Dark Navy
+    primary: '#0066FF',
+    secondary: '#6B7280',
+    primaryDark: '#0052CC',
+    primaryLight: '#3384FF',
+    secondaryDark: '#4B5563',
+    secondaryLight: '#9CA3AF',
   },
-  
-  // Primary colors (main brand)
-  primary: '#003366',
-  primaryDark: '#001F3F',
-  primaryLight: '#E6EEF5',
-  primaryHover: '#004C8C',
-  
-  // Secondary accent
-  accent: '#00A0E3',
-  accentDark: '#0080B3',
-  accentLight: '#E6F7FC',
-  
-  // Status colors
+
+  // Primary Colors (direct access for convenience)
+  primary: '#0066FF',
+  primaryDark: '#0052CC',
+  primaryLight: '#3384FF',
+  primaryBg: 'rgba(0, 102, 255, 0.08)',
+
+  // Secondary Colors
+  secondary: '#6B7280',
+  secondaryDark: '#4B5563',
+  secondaryLight: '#9CA3AF',
+
+  // Status Colors
   success: '#10B981',
-  successLight: '#D1FAE5',
   successDark: '#059669',
-  
-  danger: '#EF4444',
-  dangerLight: '#FEE2E2',
-  dangerDark: '#DC2626',
-  
+  successLight: '#34D399',
+  successBg: 'rgba(16, 185, 129, 0.1)',
+
   warning: '#F59E0B',
-  warningLight: '#FEF3C7',
   warningDark: '#D97706',
-  
+  warningLight: '#FBBF24',
+  warningBg: 'rgba(245, 158, 11, 0.1)',
+
+  danger: '#EF4444',
+  dangerDark: '#DC2626',
+  dangerLight: '#F87171',
+  dangerBg: 'rgba(239, 68, 68, 0.1)',
+
   info: '#3B82F6',
-  infoLight: '#DBEAFE',
-  
-  // Neutral palette
+  infoDark: '#2563EB',
+  infoLight: '#60A5FA',
+  infoBg: 'rgba(59, 130, 246, 0.1)',
+
+  // Neutral Colors
   neutral: {
-    50: '#F8FAFC',
-    100: '#F1F5F9',
-    200: '#E2E8F0',
-    300: '#CBD5E1',
-    400: '#94A3B8',
-    500: '#64748B',
-    600: '#475569',
-    700: '#334155',
-    800: '#1E293B',
-    900: '#0F172A',
+    50: '#F9FAFB',
+    100: '#F3F4F6',
+    200: '#E5E7EB',
+    300: '#D1D5DB',
+    400: '#9CA3AF',
+    500: '#6B7280',
+    600: '#4B5563',
+    700: '#374151',
+    800: '#1F2937',
+    900: '#111827',
   },
-  
-  // Role-specific colors
+
+  // Background Colors
+  background: {
+    primary: '#FFFFFF',
+    secondary: '#F9FAFB',
+    tertiary: '#F3F4F6',
+    dark: '#111827',
+  },
+
+  // Text Colors
+  text: {
+    primary: '#111827',
+    secondary: '#4B5563',
+    tertiary: '#6B7280',
+    disabled: '#9CA3AF',
+    inverse: '#FFFFFF',
+  },
+
+  // Border Colors
+  border: {
+    light: '#E5E7EB',
+    default: '#D1D5DB',
+    dark: '#9CA3AF',
+  },
+
+  // Role-specific Colors
   roles: {
     admin: {
-      primary: '#7C3AED',
-      light: '#EDE9FE',
-      dark: '#5B21B6',
+      primary: '#8B5CF6',
+      light: 'rgba(139, 92, 246, 0.1)',
     },
     maker: {
-      primary: '#003366',
-      light: '#E6EEF5',
-      dark: '#001F3F',
+      primary: '#0066FF',
+      light: 'rgba(0, 102, 255, 0.1)',
     },
     checker: {
-      primary: '#059669',
-      light: '#D1FAE5',
-      dark: '#047857',
+      primary: '#10B981',
+      light: 'rgba(16, 185, 129, 0.1)',
     },
+  },
+
+  // Inspection Status Colors
+  inspection: {
+    passed: '#10B981',
+    passedBg: 'rgba(16, 185, 129, 0.1)',
+    failed: '#EF4444',
+    failedBg: 'rgba(239, 68, 68, 0.1)',
+    pending: '#F59E0B',
+    pendingBg: 'rgba(245, 158, 11, 0.1)',
+    inProgress: '#3B82F6',
+    inProgressBg: 'rgba(59, 130, 246, 0.1)',
   },
 };
 
 export const shadows = {
-  sm: '0 1px 2px rgba(0,0,0,0.05)',
-  md: '0 1px 3px rgba(0,0,0,0.05), 0 4px 12px rgba(0,0,0,0.03)',
-  lg: '0 4px 12px rgba(0,0,0,0.1)',
-  xl: '0 8px 24px rgba(0,0,0,0.12)',
-  primary: '0 4px 14px rgba(0, 51, 102, 0.25)',
-  accent: '0 4px 14px rgba(0, 160, 227, 0.25)',
-  card: '0 2px 8px rgba(0, 0, 0, 0.06), 0 0 1px rgba(0, 0, 0, 0.1)',
-  cardHover: '0 8px 24px rgba(0, 0, 0, 0.12), 0 0 1px rgba(0, 0, 0, 0.1)',
+  none: 'none',
+  sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+  default: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1)',
+  md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)',
+  lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1)',
+  xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
+  glass: '0 8px 32px 0 rgba(31, 38, 135, 0.15)',
+  card: '0 2px 8px rgba(0, 0, 0, 0.08)',
+  cardHover: '0 8px 24px rgba(0, 0, 0, 0.12)',
+  input: '0 1px 2px rgba(0, 0, 0, 0.05)',
+  inputFocus: '0 0 0 3px rgba(0, 102, 255, 0.15)',
 };
 
 export const borderRadius = {
-  sm: '6px',
-  md: '8px',
-  lg: '12px',
-  xl: '16px',
-  xxl: '24px',
+  none: '0',
+  sm: '4px',
+  default: '8px',
+  md: '12px',
+  lg: '16px',
+  xl: '24px',
   full: '9999px',
 };
 
@@ -99,49 +144,51 @@ export const spacing = {
   lg: '24px',
   xl: '32px',
   xxl: '48px',
-  xxxl: '64px',
 };
 
 export const typography = {
-  fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+  fontFamily: {
+    sans: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+    mono: 'SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+  },
   fontSize: {
-    xs: '11px',
-    sm: '12px',
-    base: '14px',
-    lg: '16px',
-    xl: '18px',
+    xs: '12px',
+    sm: '14px',
+    base: '16px',
+    lg: '18px',
+    xl: '20px',
     '2xl': '24px',
-    '3xl': '32px',
-    '4xl': '40px',
+    '3xl': '30px',
+    '4xl': '36px',
   },
   fontWeight: {
-    normal: 400,
-    medium: 500,
-    semibold: 600,
-    bold: 700,
+    normal: '400',
+    medium: '500',
+    semibold: '600',
+    bold: '700',
   },
   lineHeight: {
-    tight: 1.2,
-    normal: 1.5,
-    relaxed: 1.75,
+    tight: '1.25',
+    normal: '1.5',
+    relaxed: '1.75',
   },
 };
 
 export const transitions = {
-  fast: '0.15s ease',
-  normal: '0.2s ease',
-  slow: '0.3s ease',
-  spring: '0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+  fast: '150ms ease',
+  default: '200ms ease',
+  slow: '300ms ease',
+  spring: '300ms cubic-bezier(0.68, -0.55, 0.265, 1.55)',
 };
 
 export const zIndex = {
   dropdown: 1000,
   sticky: 1020,
   fixed: 1030,
-  modalBackdrop: 1040,
-  modal: 1050,
-  popover: 1060,
-  tooltip: 1070,
+  modal: 1040,
+  popover: 1050,
+  tooltip: 1060,
+  toast: 1070,
 };
 
 export default {

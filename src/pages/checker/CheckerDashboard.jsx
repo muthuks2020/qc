@@ -21,7 +21,7 @@ import { useAuth } from '../../contexts/AuthContext';
 // Mock data for pending validations
 const mockPendingValidations = [
   {
-    "id": "VAL-001",
+    "id": "INS-2026-0350",
     "jobId": "JOB-AACS-173",
     "batchNo": "25-12-002",
     "productName": "3PIN GILLARD MALE & FEMALE",
@@ -36,7 +36,7 @@ const mockPendingValidations = [
     "notes": "All checkpoints passed. Visual inspection completed."
   },
   {
-    "id": "VAL-002",
+    "id": "RCNA-001",
     "jobId": "JOB-RCNA-001",
     "batchNo": "26-01-001",
     "productName": "CHANNEL FRAME - REGULAR",
@@ -96,7 +96,7 @@ const mockPendingValidations = [
     "notes": "Precision dimensional inspection completed. All measurements within specified tolerances."
   },
   {
-    "id": "VAL-006",
+    "id": "INS-2026-0354",
     "jobId": "JOB-RCNA-104",
     "batchNo": "25-11-001",
     "productName": "EC REP STICKER",
@@ -141,7 +141,7 @@ const mockPendingValidations = [
     "notes": "Electrical wire coil specification and damage check completed."
   },
   {
-    "id": "VAL-009",
+    "id": "INS-2026-0228",
     "jobId": "JOB-EETD-034",
     "batchNo": "26-01-003",
     "productName": "29V/3A TRANSFORMER",
@@ -156,7 +156,7 @@ const mockPendingValidations = [
     "notes": "Electrical output voltage testing completed. All voltage outputs within tolerance."
   },
   {
-    "id": "VAL-010",
+    "id": "INS-2026-0276",
     "jobId": "JOB-RUBA-001",
     "batchNo": "26-01-001",
     "productName": "M.S BASE PLATE",
@@ -171,7 +171,7 @@ const mockPendingValidations = [
     "notes": "Metal base plate dimensional inspection. All measurements verified."
   },
   {
-    id: 'VAL-002',
+    id: 'RCNA-001',
     jobId: 'JOB-002',
     batchNo: 'BATCH-2026-002',
     productName: 'Transducer Cable Assembly',
