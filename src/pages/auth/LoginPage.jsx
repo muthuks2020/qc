@@ -122,14 +122,14 @@ const LoginPage = ({ onLoginSuccess }) => {
 
             {/* Title */}
             <h1 style={styles.brandTitle}>
-              Quality Control
-              <span style={styles.brandSubtitle}>Management System</span>
+              Lorem ipsum 
+              <span style={styles.brandSubtitle}>Lorem ipsum</span>
             </h1>
 
             {/* Description */}
             <p style={styles.brandDescription}>
-              Streamlined quality assurance for B-SCAN products with real-time 
-              Odoo ERP integration. Zero manual intervention, 100% compliance guaranteed.
+              Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum
+              Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum
             </p>
 
             {/* Features */}
