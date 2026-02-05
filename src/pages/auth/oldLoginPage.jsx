@@ -335,7 +335,7 @@ const styles = {
   backgroundPattern: {
     position: 'absolute',
     inset: 0,
-    background: 'linear-gradient(135deg, #0A1628 0%, #122B4D 50%, #203f8c 100%)',
+    background: `linear-gradient(135deg, ${colors.brand.dark} 0%, ${colors.brand.primary} 50%, ${colors.brand.secondary} 100%)`,
     zIndex: 0,
   },
   
